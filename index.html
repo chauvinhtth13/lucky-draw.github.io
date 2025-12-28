@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="lemonade">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YEP 2025 - Gift Exchange</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.6.0/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Nunito"', 'sans-serif'],
+                        fun: ['"Baloo 2"', 'cursive'],
+                    },
+                    colors: {
+                        pop: {
+                            bg: '#F0F7F4',        
+                            card: '#FFFFFF',
+                            primary: '#FF6B6B',   
+                            secondary: '#4ECDC4', 
+                            yellow: '#FFE66D',    
+                            dark: '#292F36',      
+                            text: '#4A4A4A'
+                        }
+                    },
+                    boxShadow: {
+                        'block': '4px 4px 0px 0px rgba(41, 47, 54, 1)', 
+                        'block-sm': '2px 2px 0px 0px rgba(41, 47, 54, 1)',
+                    },
+                    animation: {
+                        'pop-in': 'popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                    },
+                    keyframes: {
+                        popIn: {
+                            '0%': { transform: 'scale(0.8)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Reset cơ bản */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            overflow: hidden;
+        }
+
+        /* --- BACKGROUND ĐỘNG --- */
+        .area {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(-45deg, #FF6B6B, #4ECDC4, #FFE66D, #ffffff);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            z-index: 0; 
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .circles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .circles li {
+            position: absolute;
+            display: block;
+            list-style: none;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.6);
+            animation: animate 25s linear infinite;
+            bottom: -150px;
+            border-radius: 4px;
+        }
+
+        .circles li:nth-child(1) { left: 25%; width: 80px; height: 80px; animation-delay: 0s; background: rgba(78, 205, 196, 0.6); }
+        .circles li:nth-child(2) { left: 10%; width: 20px; height: 20px; animation-delay: 2s; animation-duration: 12s; background: rgba(255, 107, 107, 0.6); }
+        .circles li:nth-child(3) { left: 70%; width: 20px; height: 20px; animation-delay: 4s; background: rgba(255, 230, 109, 0.6); }
+        .circles li:nth-child(4) { left: 40%; width: 60px; height: 60px; animation-delay: 0s; animation-duration: 18s; background: rgba(255, 255, 255, 0.5); }
+        .circles li:nth-child(5) { left: 65%; width: 20px; height: 20px; animation-delay: 0s; background: rgba(41, 47, 54, 0.2); }
+        .circles li:nth-child(6) { left: 75%; width: 110px; height: 110px; animation-delay: 3s; background: rgba(78, 205, 196, 0.5); }
+        .circles li:nth-child(7) { left: 35%; width: 150px; height: 150px; animation-delay: 7s; background: rgba(255, 107, 107, 0.4); }
+        .circles li:nth-child(8) { left: 50%; width: 25px; height: 25px; animation-delay: 15s; animation-duration: 45s; }
+        .circles li:nth-child(9) { left: 20%; width: 15px; height: 15px; animation-delay: 2s; animation-duration: 35s; background: rgba(255, 230, 109, 0.5); }
+        .circles li:nth-child(10){ left: 85%; width: 150px; height: 150px; animation-delay: 0s; animation-duration: 11s; background: rgba(78, 205, 196, 0.4); }
+
+        @keyframes animate {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; border-radius: 4px; }
+            100% { transform: translateY(-120vh) rotate(720deg); opacity: 0; border-radius: 50%; }
+        }
+
+        /* --- CARD --- */
+        .flat-card {
+            background: #ffffff;
+            border: 3px solid #292F36;
+            border-radius: 24px;
+            box-shadow: 8px 8px 0px 0px rgba(41, 47, 54, 0.2);
+            position: relative; 
+            z-index: 50; 
+        }
+
+        .shape-blob {
+            position: absolute;
+            z-index: 10;
+            opacity: 0.8;
+            animation: float 8s ease-in-out infinite;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+
+        .digit-box {
+            width: 90px; 
+            height: 120px;
+            background: #FFE66D;
+            border: 3px solid #292F36;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Baloo 2', cursive; 
+            font-size: 5rem;
+            font-weight: 800;
+            color: #292F36;
+            box-shadow: 4px 4px 0px 0px #292F36;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            line-height: 1;
+            padding-top: 10px;
+            will-change: transform, background, color, border-color;
+        }
+        
+        .digit-box.spinning {
+            background: #ffffff;
+            color: #FF6B6B;
+            animation: pulse 0.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .btn-blocky {
+            border: 3px solid #292F36;
+            border-radius: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            box-shadow: 4px 4px 0px 0px #292F36;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Baloo 2', cursive;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+        }
+        .btn-blocky:not(:disabled):active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px 0px #292F36;
+        }
+        .btn-blocky:disabled {
+            background: #e5e7eb !important;
+            color: #9ca3af !important;
+            border-color: #d1d5db !important;
+            box-shadow: 2px 2px 0px 0px #d1d5db !important;
+            cursor: not-allowed;
+            transform: none !important;
+            opacity: 0.6;
+        }
+
+        .input-flat {
+            border: 3px solid #292F36;
+            border-radius: 12px;
+            box-shadow: 4px 4px 0px 0px rgba(41, 47, 54, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Nunito', sans-serif;
+        }
+        .input-flat:focus {
+            outline: none;
+            box-shadow: 6px 6px 0px 0px #4ECDC4;
+            border-color: #4ECDC4;
+            transform: translateY(-2px);
+        }
+        .input-flat:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .history-item {
+            background: white;
+            border: 2px solid #f3f4f6;
+            border-radius: 12px;
+            transition: 0.2s;
+            font-family: 'Nunito', sans-serif;
+        }
+        .history-item:hover {
+            border-color: #292F36;
+            transform: scale(1.02);
+            background: #FFF9C4; 
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #4ECDC4; border-radius: 10px; transition: background 0.3s; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #3db8b0; }
+
+        .no-select { -webkit-user-select: none; user-select: none; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .history-item { animation: slideIn 0.3s ease-out; }
+        .btn-blocky:not(:disabled):hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0px 0px #292F36; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 relative font-sans">
+
+    <div class="area">
+        <ul class="circles">
+            <li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li>
+        </ul>
+    </div>
+
+    <div class="shape-blob top-10 left-10 text-white text-9xl mix-blend-overlay"><i class="fa-solid fa-gift"></i></div>
+    <div class="shape-blob bottom-20 right-20 text-white text-9xl mix-blend-overlay" style="animation-delay: 2s"><i class="fa-solid fa-star"></i></div>
+    <div class="shape-blob top-1/2 left-[-50px] text-white text-8xl mix-blend-overlay" style="animation-delay: 1s"><i class="fa-solid fa-circle"></i></div>
+
+    <div class="w-full max-w-5xl flat-card p-6 md:p-10 flex flex-col gap-8 animate-pop-in bg-white/95 backdrop-blur-sm relative">
+        
+        <div class="flex justify-between items-start">
+            <div>
+                <h1 class="font-fun text-5xl md:text-6xl text-pop-dark leading-none font-extrabold">
+                    YEAR END PARTY <span class="text-pop-primary">2025</span>
+                </h1>
+            </div>
+            
+            <button onclick="my_modal_1.showModal()" class="w-12 h-12 bg-white border-2 border-pop-dark rounded-full flex items-center justify-center shadow-block-sm hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
+                <i class="fa-solid fa-gear text-pop-dark text-xl"></i>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mt-2">
+            
+            <div class="lg:col-span-7 flex flex-col items-center gap-8">
+                
+                <div class="bg-blue-50 w-full p-8 rounded-3xl border-2 border-dashed border-blue-200 flex justify-center items-center gap-4 relative">
+                    <div class="absolute -top-3 bg-white px-3 border-2 border-blue-200 rounded-full text-xs font-extrabold text-blue-400">MÓN QUÀ MAY MẮN SỐ</div>
+                    <div id="box-1" class="digit-box"><span id="digit-1">-</span></div>
+                    <div id="box-2" class="digit-box"><span id="digit-2">-</span></div>
+                    <div id="box-3" class="digit-box"><span id="digit-3">-</span></div>
+                </div>
+
+                <div class="w-full flex flex-col gap-4">
+                    <div class="relative">
+                        <input type="text" id="current-player" oninput="checkPlayer()" onkeypress="handleKeyPress(event)" autocomplete="off"
+                            class="input-flat w-full py-4 px-5 text-xl font-bold font-sans text-pop-dark placeholder-gray-400" 
+                            placeholder="Nhập tên người lên nhận quà...">
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300"><i class="fa-solid fa-user-astronaut text-2xl"></i></div>
+                    </div>
+
+                    <div id="player-msg" class="h-6 text-center font-bold text-sm text-gray-400 transition-all duration-300">Sẵn sàng bốc thăm!</div>
+
+                    <div class="grid grid-cols-4 gap-4">
+                        <button id="btn-spin" onclick="startSpin()" disabled 
+                            class="col-span-3 btn-blocky bg-pop-primary text-white text-xl py-4 hover:bg-[#ff5252]">
+                            <i class="fa-solid fa-gift mr-2"></i> NHẬN QUÀ
+                        </button>
+                        <button onclick="nextPerson()" 
+                            class="col-span-1 btn-blocky bg-white text-pop-dark border-pop-dark hover:bg-gray-50">
+                            <i class="fa-solid fa-forward text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5 flex flex-col h-full max-h-[500px]">
+                <div class="flex justify-between items-end mb-3 px-1">
+                    <h3 class="font-fun text-2xl text-pop-dark font-bold">Lịch sử nhận quà</h3>
+                    <span class="text-sm font-bold bg-pop-yellow px-2 py-1 rounded border-2 border-pop-dark shadow-block-sm">
+                        Còn: <span id="remaining-count">0</span> quà
+                    </span>
+                </div>
+
+                <div class="bg-gray-50 rounded-2xl border-2 border-gray-200 p-2 flex-1 overflow-hidden flex flex-col">
+                    <ul id="history-list" class="flex-1 overflow-y-auto space-y-2 p-1 custom-scrollbar">
+                        <div id="empty-state" class="h-full flex flex-col items-center justify-center text-gray-300">
+                            <i class="fa-solid fa-box-open text-4xl mb-2"></i>
+                            <span class="font-bold">Chưa có ai nhận quà</span>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <dialog id="my_modal_1" class="modal backdrop-blur-sm">
+        <div class="modal-box bg-white border-4 border-pop-dark rounded-3xl shadow-block p-6">
+            <h3 class="font-fun text-2xl mb-2 text-pop-primary font-bold">CÀI ĐẶT DANH SÁCH</h3>
+            <p class="text-sm text-gray-500 mb-2"><b>Định dạng:</b> Tên Người Chơi, Số Quà Họ Mang Đến</p>
+            <p class="text-xs text-gray-400 mb-4">Hệ thống sẽ đảm bảo người chơi không bốc trúng quà của chính mình.</p>
+            <textarea id="input-list" class="w-full h-48 bg-gray-50 border-2 border-gray-200 rounded-xl p-4 font-bold text-gray-600 focus:outline-none focus:border-pop-secondary focus:bg-white transition-all duration-300 font-sans resize-none"
+                placeholder="Nguyen Van A, 1&#10;Tran Thi B, 2" spellcheck="false"></textarea>
+            <div class="modal-action grid grid-cols-2 gap-4 mt-6">
+                <form method="dialog" class="w-full"><button class="btn-blocky w-full py-3 bg-gray-200 text-gray-600 border-gray-400 shadow-[4px_4px_0px_0px_#9ca3af]">Hủy</button></form>
+                <button onclick="saveData()" class="btn-blocky w-full py-3 bg-pop-secondary text-white border-pop-dark">Lưu Lại</button>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>close</button></form>
+    </dialog>
+
+    <script>
+        // --- LOGIC ---
+        let fullList = [];
+        let drawnNumbers = [];
+        let isSpinning = false;
+        let checkPlayerTimeout;
+        
+        // --- CẤU HÌNH 3 FILE ÂM THANH ---
+        const bgMusic = new Audio('sound.mp3'); 
+        bgMusic.loop = true; 
+        bgMusic.volume = 0.5; // Nhạc nền nhỏ hơn chút
+
+        const spinMusic = new Audio('sound1.mp3'); 
+        spinMusic.loop = true; // Lặp nhạc quay số nếu nó ngắn hơn 3s
+        spinMusic.volume = 1.0;
+
+        const winSound = new Audio('sound2.mp3'); 
+        winSound.loop = false;
+        winSound.volume = 1.0;
+
+        const defaultData = `Tuấn Anh, 1\nHoàng Bình, 2\nQuốc Cường, 3\nThùy Dương, 4\nNgọc Em, 5\nHải Phong, 6\nGia Hân, 7\nMinh Khôi, 8\nLan Nhi, 9\nPhương Oanh, 10\nThanh Tâm, 11\nViệt Thắng, 12\nNhã Uyên, 13\nXuân Vinh, 14\nHải Yến, 15`;
+
+        // Khi tải trang xong
+        window.onload = function() {
+            document.getElementById('input-list').value = defaultData;
+            saveData(false);
+            startBackgroundMusic();
+        }
+
+        // Hàm bật nhạc nền
+        function startBackgroundMusic() {
+            bgMusic.play().catch(error => {
+                console.log("Trình duyệt chặn autoplay. Cần click chuột.");
+                document.body.addEventListener('click', () => {
+                    bgMusic.play();
+                }, { once: true });
+            });
+        }
+
+        function normalizeStr(str) {
+            if (!str) return "";
+            return str.normalize('NFC').trim().replace(/\s+/g, ' ').toLowerCase();
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !document.getElementById('btn-spin').disabled) {
+                startSpin();
+            }
+        }
+
+        function saveData(showAlert = true) {
+            const raw = document.getElementById('input-list').value.trim();
+            if (!raw) { alert('Vui lòng nhập danh sách!'); return; }
+            
+            const lines = raw.split('\n').filter(line => line.trim());
+            fullList = [];
+            drawnNumbers = [];
+            const usedNumbers = new Set();
+            
+            lines.forEach(line => {
+                const parts = line.split(',');
+                if(parts.length >= 2) {
+                    const nameRaw = parts[0];
+                    const num = parseInt(parts[1].trim());
+                    if(nameRaw && !isNaN(num) && num > 0) {
+                        if(usedNumbers.has(num)) { console.warn(`Số quà ${num} bị trùng lặp!`); }
+                        usedNumbers.add(num);
+                        fullList.push({ name: nameRaw.trim(), searchKey: normalizeStr(nameRaw), number: num });
+                    }
+                }
+            });
+            
+            if(fullList.length === 0) { alert('Không có dữ liệu hợp lệ! Vui lòng kiểm tra định dạng.'); return; }
+            
+            resetGame();
+            document.getElementById('my_modal_1').close();
+            if(showAlert) alert(`✅ Đã cập nhật: ${fullList.length} người & quà.`);
+        }
+
+        const DOM = {
+            get currentPlayer() { return document.getElementById('current-player'); },
+            get playerMsg() { return document.getElementById('player-msg'); },
+            get btnSpin() { return document.getElementById('btn-spin'); },
+            get historyList() { return document.getElementById('history-list'); },
+            get remainingCount() { return document.getElementById('remaining-count'); },
+            get emptyState() { return document.getElementById('empty-state'); },
+            boxes: ['box-1', 'box-2', 'box-3'].map(id => () => document.getElementById(id)),
+            digits: ['digit-1', 'digit-2', 'digit-3'].map(id => () => document.getElementById(id))
+        };
+
+        function checkPlayer() {
+            clearTimeout(checkPlayerTimeout);
+            checkPlayerTimeout = setTimeout(() => {
+                const inputVal = DOM.currentPlayer.value;
+                const searchKey = normalizeStr(inputVal);
+                const msg = DOM.playerMsg;
+                const btn = DOM.btnSpin;
+
+                if (searchKey === "") {
+                    msg.innerHTML = "Nhập tên để nhận quà...";
+                    msg.className = "h-6 text-center font-bold text-sm text-gray-400 transition-all";
+                    btn.disabled = true;
+                    return;
+                }
+                const player = fullList.find(p => p.searchKey === searchKey);
+                if (player) {
+                    msg.innerHTML = `<i class="fa-solid fa-check-circle"></i> Sẵn sàng: ${player.name}`;
+                    msg.className = "h-6 text-center font-bold text-sm text-pop-secondary transition-all";
+                    btn.disabled = false;
+                } else {
+                    msg.innerHTML = `<i class="fa-solid fa-exclamation-circle"></i> Không tìm thấy tên trong danh sách...`;
+                    msg.className = "h-6 text-center font-bold text-sm text-orange-500 transition-all";
+                    btn.disabled = true;
+                }
+            }, 100); 
+        }
+
+        function startSpin() {
+            if (isSpinning) return;
+
+            // --- QUẢN LÝ NHẠC: BẮT ĐẦU QUAY ---
+            bgMusic.pause();        // Dừng nhạc nền
+            spinMusic.currentTime = 0; // Tua lại nhạc quay
+            spinMusic.play();       // Phát nhạc quay
+
+            const inputVal = DOM.currentPlayer.value;
+            const currentPlayer = fullList.find(p => p.searchKey === normalizeStr(inputVal));
+            const drawnSet = new Set(drawnNumbers);
+            const allGiftNumbers = fullList.map(p => p.number);
+            
+            let availableNumbers = allGiftNumbers.filter(num => !drawnSet.has(num) && (currentPlayer ? num !== currentPlayer.number : true));
+
+            if (availableNumbers.length === 0) {
+                const remaining = allGiftNumbers.filter(num => !drawnSet.has(num));
+                if (remaining.length > 0) {
+                    alert("Ôi không! Chỉ còn lại duy nhất món quà của chính bạn. Hãy tráo đổi thứ tự với người khác hoặc nhận luôn nhé!");
+                    availableNumbers = remaining;
+                } else {
+                    alert("Hết quà rồi!");
+                    return;
+                }
+            }
+
+            const winnerNum = availableNumbers[Math.floor(Math.random() * availableNumbers.length)];
+            const winnerStr = winnerNum.toString().padStart(3, '0');
+
+            isSpinning = true;
+            DOM.btnSpin.disabled = true;
+            DOM.currentPlayer.disabled = true;
+
+            const boxes = [document.getElementById('box-1'), document.getElementById('box-2'), document.getElementById('box-3')];
+            const digits = [document.getElementById('digit-1'), document.getElementById('digit-2'), document.getElementById('digit-3')];
+
+            boxes.forEach(box => box.classList.add('spinning', 'no-select'));
+            
+            const revealDigit = (box, digit, value) => {
+                cancelAnimationFrame(digit._animFrame);
+                digit.textContent = value;
+                box.classList.remove('spinning', 'no-select');
+                box.style.cssText = 'background: #FF6B6B; color: white; border-color: #FF6B6B;';
+            };
+
+            const timers = digits.map(digit => {
+                let lastUpdate = 0;
+                const animate = (timestamp) => {
+                    if (timestamp - lastUpdate > 50) { 
+                        digit.textContent = Math.floor(Math.random() * 10);
+                        lastUpdate = timestamp;
+                    }
+                    digit._animFrame = requestAnimationFrame(animate);
+                };
+                digit._animFrame = requestAnimationFrame(animate);
+                return digit;
+            });
+
+            const revealTimes = [1500, 2500, 3500];
+            revealTimes.forEach((time, i) => {
+                setTimeout(() => {
+                    revealDigit(boxes[i], digits[i], winnerStr[i]);
+                    if (i === 2) {
+                        setTimeout(() => finalizeSpin(winnerNum, currentPlayer?.name || "Ẩn danh"), 200);
+                    }
+                }, time);
+            });
+        }
+
+        function finalizeSpin(number, playerName) {
+            isSpinning = false;
+            drawnNumbers.push(number);
+
+            // --- QUẢN LÝ NHẠC: KẾT THÚC QUAY ---
+            spinMusic.pause();        // Dừng nhạc quay
+            winSound.currentTime = 0;
+            winSound.play();          // Phát nhạc thắng (sound2)
+
+            // Khi nhạc thắng hết (hoặc sau 2s) -> Quay lại nhạc nền
+            setTimeout(() => {
+                winSound.pause(); // Đảm bảo dừng nếu nhạc quá dài
+                bgMusic.play();   // Quay lại nhạc nền
+            }, 2000); // 2000 = 2 giây
+
+            runFireworks(); 
+            updateHistory(number, playerName);
+            updateCount();
+        }
+
+        function runFireworks() {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+            var randomInRange = (min, max) => Math.random() * (max - min) + min;
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) { return clearInterval(interval); }
+                var particleCount = 50 * (timeLeft / duration);
+                
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                    colors: ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FFFFFF']
+                }));
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                    colors: ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FFFFFF']
+                }));
+            }, 250);
+        }
+
+        function updateHistory(number, playerName) {
+            const ul = DOM.historyList;
+            const emptyState = DOM.emptyState;
+            if (emptyState) emptyState.style.display = 'none';
+
+            const li = document.createElement('li');
+            li.className = 'history-item flex justify-between items-center px-4 py-3';
+            const numStr = number.toString().padStart(3, '0');
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'font-bold text-pop-dark truncate w-2/3';
+            nameSpan.textContent = playerName;
+
+            li.appendChild(nameSpan);
+            li.insertAdjacentHTML('beforeend', `
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-gray-400 font-bold uppercase">Nhận quà</span>
+                    <span class="font-fun text-xl text-pop-primary font-bold bg-red-50 px-2 rounded-lg border border-red-100">${numStr}</span>
+                </div>
+            `);
+            ul.prepend(li);
+            if (ul.children.length > 100) ul.lastChild.remove();
+        }
+
+        function nextPerson() {
+            if (isSpinning) return;
+            const input = DOM.currentPlayer;
+            input.value = "";
+            input.disabled = false;
+            input.focus();
+            
+            ['box-1', 'box-2', 'box-3'].forEach((boxId, i) => {
+                const box = document.getElementById(boxId);
+                const digit = document.getElementById(`digit-${i + 1}`);
+                digit.textContent = "-";
+                box.style.cssText = "";
+                box.classList.remove('spinning', 'no-select');
+            });
+            const msg = DOM.playerMsg;
+            msg.innerHTML = "Sẵn sàng bốc thăm!";
+            msg.className = "h-6 text-center font-bold text-sm text-gray-400 transition-all duration-300";
+            DOM.btnSpin.disabled = true;
+        }
+
+        function resetGame() {
+            drawnNumbers = [];
+            document.getElementById('history-list').innerHTML = `
+                <div id="empty-state" class="h-full flex flex-col items-center justify-center text-gray-300">
+                    <i class="fa-solid fa-box-open text-4xl mb-2"></i>
+                    <span class="font-bold">Chưa có ai nhận quà</span>
+                </div>`;
+            updateCount();
+            nextPerson();
+        }
+
+        function updateCount() {
+            DOM.remainingCount.textContent = fullList.length - drawnNumbers.length;
+        }
+    </script>
+</body>
+</html>
