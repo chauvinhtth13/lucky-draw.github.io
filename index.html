@@ -54,218 +54,131 @@
         body {
             font-family: 'Nunito', sans-serif;
             overflow: hidden;
-            background-color: #ff9a9e;
-            /* Enable GPU compositing for smoother scrolling */
-            -webkit-overflow-scrolling: touch;
+            /* Thay màu trắng bằng màu nền cơ bản ấm áp */
+            background-color: #ffe6fa; 
         }
 
         /* =========================================
-           OPTIMIZED BACKGROUND EFFECTS START
+           NEW BACKGROUND: AURORA PARTY STYLE
+           Sử dụng GPU (transform) để tối ưu iPad
         ========================================= */
+        .bg-layer {
+            position: fixed;
+            inset: 0;
+            z-index: -10;
+            overflow: hidden;
+            background: linear-gradient(120deg, #ffe6fa 0%, #e3fdf5 100%); /* Nền gốc Gradient nhẹ */
+        }
 
-        /* LAYER 1: Smooth Gradient Flow - Optimized for GPU */
-        .bg-animated {
+        /* 1. Các khối màu loang (Blobs) */
+        .color-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px); /* Làm mờ mạnh để tạo nền mịn */
+            opacity: 0.8;
+            will-change: transform;
+            animation: blob-bounce 20s infinite ease-in-out alternate;
+        }
+
+        .blob-1 {
+            width: 70vh; height: 70vh;
+            background: #ff9a9e; /* Hồng đào */
+            top: -10%; left: -10%;
+            animation-duration: 25s;
+        }
+        .blob-2 {
+            width: 60vh; height: 60vh;
+            background: #a18cd1; /* Tím mộng mơ */
+            bottom: -10%; right: -10%;
+            animation-duration: 30s;
+            animation-delay: -5s;
+        }
+        .blob-3 {
+            width: 50vh; height: 50vh;
+            background: #4facfe; /* Xanh dương */
+            top: 40%; left: 30%;
+            opacity: 0.6;
+            animation-duration: 22s;
+            animation-delay: -10s;
+        }
+
+        @keyframes blob-bounce {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
+        }
+
+        /* 2. Các hình khối bay lơ lửng (Floating Shapes) - Tạo sự sinh động */
+        .floating-shapes {
             position: fixed;
             inset: 0;
             z-index: -5;
-            background: linear-gradient(-45deg, #FF9A9E, #FECFEF, #E0C3FC, #8EC5FC);
-            background-size: 200% 200%; /* Reduced from 300% for better performance */
-            animation: gradientBG 20s ease infinite; /* Slower = smoother */
-            transform: translateZ(0); /* Force GPU layer */
-            backface-visibility: hidden;
-        }
-        
-        @keyframes gradientBG {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        /* LAYER 3: Bokeh Lights - GPU optimized */
-        .bokeh-container {
-            position: fixed;
-            inset: 0;
-            z-index: -3;
             pointer-events: none;
-            transform: translateZ(0);
-            contain: layout style paint; /* CSS containment for performance */
         }
-        .bokeh {
+
+        .shape {
             position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,255,255,0.35) 0%, transparent 70%);
-            animation: floatBokeh ease-in-out infinite alternate;
-            transform: translateZ(0);
-            backface-visibility: hidden;
-        }
-        .bokeh:nth-child(1) { top: 10%; left: 10%; width: 120px; height: 120px; animation-duration: 25s; opacity: 0.5; }
-        .bokeh:nth-child(2) { top: 70%; left: 80%; width: 160px; height: 160px; animation-duration: 30s; animation-delay: -5s; opacity: 0.4; }
-        .bokeh:nth-child(3) { top: 40%; left: 40%; width: 80px; height: 80px; animation-duration: 22s; animation-delay: -10s; opacity: 0.35; }
-
-        @keyframes floatBokeh {
-            0% { transform: translate3d(0, 0, 0) scale(1); }
-            100% { transform: translate3d(20px, -20px, 0) scale(1.05); }
-        }
-
-        /* LAYER 4: Floating Geometric Shapes - Simplified */
-        .shapes-container {
-            position: fixed;
-            inset: 0;
-            z-index: -2;
-            pointer-events: none;
-            transform: translateZ(0);
-            contain: layout style paint;
-        }
-        .floating-shape {
-            position: absolute;
-            opacity: 0.5;
-            animation: shapeFloat linear infinite;
-            transform: translateZ(0);
-            backface-visibility: hidden;
-        }
-        .shape-sq { width: 25px; height: 25px; background: #FFE66D; border-radius: 4px; }
-        .shape-cir { width: 20px; height: 20px; border-radius: 50%; border: 3px solid #FF6B6B; background: transparent; }
-
-        .floating-shape:nth-child(1) { top: 20%; left: 5%; animation-duration: 30s; }
-        .floating-shape:nth-child(2) { top: 80%; left: 85%; animation-duration: 35s; animation-direction: reverse; }
-        .floating-shape:nth-child(3) { top: 15%; left: 70%; animation-duration: 32s; }
-
-        @keyframes shapeFloat {
-            0% { transform: translate3d(0, 40px, 0) rotate(0deg); opacity: 0; }
-            15% { opacity: 0.5; }
-            85% { opacity: 0.5; }
-            100% { transform: translate3d(0, -40px, 0) rotate(360deg); opacity: 0; }
-        }
-
-        /* LAYER 5: Blobs - Static on tablets for performance */
-        .blob {
-            position: absolute;
-            border-radius: 50%;
             opacity: 0.4;
-            z-index: -1;
-            animation: blobMove 25s infinite alternate ease-in-out;
-            transform: translateZ(0);
-            backface-visibility: hidden;
-        }
-        .blob-1 { 
-            top: -10%; left: -10%; width: 400px; height: 400px; 
-            background: radial-gradient(circle, #FF9A9E 0%, transparent 70%);
-        }
-        .blob-2 { 
-            bottom: -10%; right: -10%; width: 350px; height: 350px; 
-            background: radial-gradient(circle, #A18CD1 0%, transparent 70%);
-            animation-delay: -12s;
+            will-change: transform;
+            animation: shape-float linear infinite;
         }
 
-        @keyframes blobMove {
-            0% { transform: translate3d(0, 0, 0) scale(1); }
-            100% { transform: translate3d(20px, 20px, 0) scale(1.05); }
+        /* Hình vuông */
+        .shape-sq {
+            width: 40px; height: 40px;
+            border: 4px solid #FF6B6B;
+            border-radius: 8px;
+            top: 100%; left: 15%;
+            animation-duration: 15s;
+            animation-delay: 0s;
+        }
+        /* Hình tròn */
+        .shape-cir {
+            width: 30px; height: 30px;
+            background: #4ECDC4;
+            border-radius: 50%;
+            top: 100%; left: 45%;
+            animation-duration: 12s;
+            animation-delay: 2s;
+        }
+        /* Hình tam giác (dùng border css) */
+        .shape-tri {
+            width: 0; height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 35px solid #FFE66D;
+            top: 100%; left: 75%;
+            animation-duration: 18s;
+            animation-delay: 5s;
+        }
+         /* Hình vuông đặc */
+         .shape-sq-fill {
+            width: 25px; height: 25px;
+            background: #a18cd1;
+            border-radius: 4px;
+            top: 100%; left: 85%;
+            animation-duration: 20s;
+            animation-delay: 1s;
         }
 
-        /* LAYER 6: Emoji Rain - Reduced for smooth performance */
-        .emoji-container {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-            transform: translateZ(0);
-            contain: layout style paint;
-        }
-        
-        .emoji-particle {
-            position: absolute;
-            font-size: 1.5rem;
-            user-select: none;
-            opacity: 0.6;
-            animation: floatEmoji linear infinite;
-            transform: translateZ(0);
-            backface-visibility: hidden;
-        }
-
-        .emoji-particle:nth-child(1) { left: 10%; animation-duration: 22s; animation-delay: 0s; }
-        .emoji-particle:nth-child(2) { left: 30%; animation-duration: 26s; animation-delay: 6s; font-size: 1.8rem; }
-        .emoji-particle:nth-child(3) { left: 50%; animation-duration: 20s; animation-delay: 3s; }
-        .emoji-particle:nth-child(4) { left: 70%; animation-duration: 24s; animation-delay: 9s; font-size: 1.7rem; }
-        .emoji-particle:nth-child(5) { left: 90%; animation-duration: 28s; animation-delay: 2s; }
-        .emoji-particle:nth-child(6) { left: 20%; animation-duration: 32s; animation-delay: 12s; opacity: 0.4; }
-
-        @keyframes floatEmoji {
-            0% { transform: translate3d(0, 105vh, 0) rotate(0deg); opacity: 0; }
-            8% { opacity: 0.6; }
-            92% { opacity: 0.6; }
-            100% { transform: translate3d(0, -5vh, 0) rotate(15deg); opacity: 0; }
+        @keyframes shape-float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
 
         /* =========================================
-           TABLET & MOBILE OPTIMIZATIONS
+           GIỮ NGUYÊN CSS GIAO DIỆN CŨ
         ========================================= */
-        @media (max-width: 1024px) {
-            /* Reduce animation complexity on tablets */
-            .bokeh { animation-duration: 35s !important; }
-            .floating-shape { animation-duration: 40s !important; }
-            .blob { animation: none !important; } /* Static blobs on tablet */
-            .emoji-particle { 
-                animation-duration: 30s !important;
-                font-size: 1.3rem !important;
-                opacity: 0.5 !important;
-            }
-            .bg-animated { animation-duration: 30s; }
-        }
-
-        @media (max-width: 768px) {
-            /* Further reduce on smaller tablets/phones */
-            .bokeh-container .bokeh:nth-child(3) { display: none; }
-            .shapes-container .floating-shape:nth-child(3) { display: none; }
-            .emoji-container .emoji-particle:nth-child(5),
-            .emoji-container .emoji-particle:nth-child(6) { display: none; }
-            .blob { opacity: 0.3; }
-        }
-
-        /* Reduce motion for users who prefer it */
-        @media (prefers-reduced-motion: reduce) {
-            .bg-animated,
-            .bokeh,
-            .floating-shape,
-            .blob,
-            .emoji-particle {
-                animation: none !important;
-            }
-        }
-        /* =========================================
-           OPTIMIZED BACKGROUND EFFECTS END
-        ========================================= */
-
-
-        /* ===== CARD STYLES ===== */
         .glass-card {
-            background: rgba(255, 255, 255, 0.8); /* More opaque = less GPU work */
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.6); /* Giảm opacity để thấy nền đẹp hơn */
+            backdrop-filter: blur(20px); /* Tăng blur để tách biệt nội dung */
+            -webkit-backdrop-filter: blur(20px);
             border: 4px solid #292F36;
             border-radius: 30px;
-            box-shadow: 10px 10px 0px 0px rgba(41, 47, 54, 0.8);
+            box-shadow: 12px 12px 0px 0px rgba(41, 47, 54, 0.8);
             position: relative; 
-            z-index: 50;
-            transform: translateZ(0); /* GPU layer */
-        }
-
-        /* Reduce backdrop-filter on tablets for performance */
-        @media (max-width: 1024px) {
-            .glass-card {
-                background: rgba(255, 255, 255, 0.92);
-                backdrop-filter: blur(6px);
-                -webkit-backdrop-filter: blur(6px);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .glass-card {
-                background: rgba(255, 255, 255, 0.95);
-                backdrop-filter: none;
-                -webkit-backdrop-filter: none;
-                border-radius: 20px;
-                padding: 1rem;
-            }
+            z-index: 50; 
         }
 
         .digit-box {
@@ -285,39 +198,18 @@
             transition: all 0.2s ease;
             line-height: 1;
             padding-top: 10px;
-            transform: translateZ(0); /* GPU acceleration */
         }
         
         .digit-box.spinning {
             background: #ffffff;
             color: #FF6B6B;
-            animation: shake 0.4s ease-in-out infinite;
+            animation: shake 0.5s ease-in-out infinite;
         }
 
         @keyframes shake {
-            0%, 100% { transform: translateZ(0) rotate(0deg); }
-            25% { transform: translateZ(0) rotate(-2deg); }
-            75% { transform: translateZ(0) rotate(2deg); }
-        }
-
-        /* Tablet responsive digit boxes */
-        @media (max-width: 1024px) {
-            .digit-box {
-                width: 75px;
-                height: 100px;
-                font-size: 4rem;
-                border-radius: 16px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .digit-box {
-                width: 60px;
-                height: 85px;
-                font-size: 3rem;
-                border-radius: 14px;
-                border-width: 3px;
-            }
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-3deg); }
+            75% { transform: rotate(3deg); }
         }
 
         .btn-blocky {
@@ -400,7 +292,6 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        /* Modal Styles */
         .modal-box {
             border: 4px solid #292F36;
             border-radius: 24px;
@@ -410,35 +301,21 @@
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 relative font-sans">
 
-    <div class="bg-animated"></div>
-    
-    <!-- Removed bg-noise -->
-
-    <div class="bokeh-container">
-        <div class="bokeh"></div>
-        <div class="bokeh"></div>
-        <div class="bokeh"></div>
+    <div class="bg-layer">
+        <div class="color-blob blob-1"></div>
+        <div class="color-blob blob-2"></div>
+        <div class="color-blob blob-3"></div>
     </div>
 
-    <div class="shapes-container">
-        <div class="floating-shape shape-sq"></div>
-        <div class="floating-shape shape-tri"></div>
-        <div class="floating-shape shape-cir"></div>
+    <div class="floating-shapes">
+        <div class="shape shape-sq"></div>
+        <div class="shape shape-cir"></div>
+        <div class="shape shape-tri"></div>
+        <div class="shape shape-sq-fill"></div>
+        <div class="shape shape-cir" style="left: 20%; animation-delay: 8s; background: #FF9A9E;"></div>
+        <div class="shape shape-sq" style="left: 60%; animation-delay: 12s; border-color: #a18cd1;"></div>
     </div>
 
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-
-    <div class="emoji-container">
-        <div class="emoji-particle">🎁</div>
-        <div class="emoji-particle">🥂</div>
-        <div class="emoji-particle">✨</div>
-        <div class="emoji-particle">💰</div>
-        <div class="emoji-particle">🎉</div>
-        <div class="emoji-particle">💖</div>
-    </div>
-
-    <!-- Overlay Click to Start -->
     <div id="start-overlay" class="fixed inset-0 z-[100] bg-gradient-to-br from-pop-primary/90 via-pop-secondary/90 to-pop-yellow/90 flex items-center justify-center cursor-pointer" onclick="startApp()">
         <div class="text-center animate-pulse">
             <div class="text-8xl mb-6">🎉</div>
@@ -463,12 +340,10 @@
             </div>
             
             <div class="flex gap-3">
-                <!-- Nút bật tắt âm thanh -->
                 <button id="btn-sound" onclick="toggleSound()" class="w-12 h-12 bg-white border-2 border-pop-dark rounded-xl flex items-center justify-center shadow-block-sm hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all group">
                     <i id="icon-sound" class="fa-solid fa-volume-high text-pop-dark text-xl group-hover:scale-110 transition-transform"></i>
                 </button>
 
-                <!-- Nút cài đặt -->
                 <button onclick="my_modal_1.showModal()" class="w-12 h-12 bg-white border-2 border-pop-dark rounded-xl flex items-center justify-center shadow-block-sm hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all group">
                     <i class="fa-solid fa-gear text-pop-dark text-xl group-hover:rotate-90 transition-transform duration-500"></i>
                 </button>
@@ -553,7 +428,7 @@
     </dialog>
 
     <script>
-        // --- GAME LOGIC ---
+        // --- LOGIC GIỮ NGUYÊN ---
         let playerList = [];
         let giftMap = {};
         let allGiftNumbers = [];
@@ -562,60 +437,43 @@
         let checkPlayerTimeout;
         let isMuted = false;
         
-        // --- CẤU HÌNH ÂM THANH ---
         const bgMusic = new Audio('sound_nen.mp3'); 
-        bgMusic.loop = true; 
-        bgMusic.volume = 0.5;
+        bgMusic.loop = true; bgMusic.volume = 0.5;
 
         const spinMusic = new Audio('sound_quay.mp3'); 
-        spinMusic.loop = true;
-        spinMusic.volume = 1.0;
+        spinMusic.loop = true; spinMusic.volume = 1.0;
 
-        // Âm thanh thắng sẽ được tạo động khi quay xong
         let winAudio = null;
         
-        // --- HỆ THỐNG RANDOM ÂM THANH KHÔNG LẶP ---
         const TOTAL_WIN_SOUNDS = 9;
-        let winSoundQueue = []; // Queue các âm thanh sẽ phát
-        let lastPlayedSounds = []; // Lưu 3 âm thanh gần nhất để tránh lặp
+        let winSoundQueue = [];
+        let lastPlayedSounds = [];
         
-        // Hàm tạo queue mới khi hết hoặc khởi tạo
         function shuffleWinSounds() {
-            // Tạo mảng [1, 2, 3, ..., 9]
             let sounds = Array.from({length: TOTAL_WIN_SOUNDS}, (_, i) => i + 1);
-            
-            // Fisher-Yates shuffle
             for (let i = sounds.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [sounds[i], sounds[j]] = [sounds[j], sounds[i]];
             }
-            
-            // Đảm bảo âm thanh đầu queue không trùng với âm thanh vừa phát
             if (lastPlayedSounds.length > 0) {
                 const lastPlayed = lastPlayedSounds[lastPlayedSounds.length - 1];
                 if (sounds[0] === lastPlayed) {
-                    // Đổi vị trí với phần tử random khác
                     const swapIdx = Math.floor(Math.random() * (sounds.length - 1)) + 1;
                     [sounds[0], sounds[swapIdx]] = [sounds[swapIdx], sounds[0]];
                 }
             }
-            
             return sounds;
         }
         
-        // Lấy âm thanh tiếp theo từ queue
         function getNextWinSound() {
             if (winSoundQueue.length === 0) {
                 winSoundQueue = shuffleWinSounds();
             }
             const soundIndex = winSoundQueue.shift();
-            
-            // Cập nhật danh sách âm thanh đã phát (giữ tối đa 3)
             lastPlayedSounds.push(soundIndex);
             if (lastPlayedSounds.length > 3) {
                 lastPlayedSounds.shift();
             }
-            
             return soundIndex;
         }
 
@@ -646,32 +504,18 @@ Hồng Châu, 25
         window.onload = function() {
             document.getElementById('input-list').value = defaultData;
             saveData(false);
-            // Không tự động phát nhạc - chờ người dùng click overlay
         }
 
-        // Hàm khởi động app khi click overlay
         function startApp() {
             const overlay = document.getElementById('start-overlay');
-            
-            // Ẩn overlay với animation
             overlay.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
             overlay.style.opacity = '0';
             overlay.style.transform = 'scale(1.1)';
-            
-            setTimeout(() => {
-                overlay.style.display = 'none';
-            }, 500);
-            
-            // Phát nhạc nền ngay lập tức
-            if (!isMuted) {
-                bgMusic.play().catch(e => console.log("Lỗi phát nhạc:", e));
-            }
-            
-            // Focus vào ô nhập tên
+            setTimeout(() => { overlay.style.display = 'none'; }, 500);
+            if (!isMuted) bgMusic.play().catch(e => console.log("Lỗi phát nhạc:", e));
             DOM.currentPlayer.focus();
         }
 
-        // Cập nhật UI nút âm thanh
         function updateSoundButtonUI() {
             const icon = document.getElementById('icon-sound');
             const btn = document.getElementById('btn-sound');
@@ -687,21 +531,12 @@ Hồng Châu, 25
 
         function toggleSound() {
             isMuted = !isMuted;
-            
             if (isMuted) {
-                // Tắt tất cả âm thanh
-                bgMusic.pause();
-                spinMusic.pause();
-                if(winAudio) winAudio.pause();
+                bgMusic.pause(); spinMusic.pause(); if(winAudio) winAudio.pause();
             } else {
-                // Bật nhạc phù hợp với trạng thái hiện tại
-                if (!isSpinning) {
-                    bgMusic.play().catch(e => console.log("Cần tương tác để phát nhạc"));
-                } else {
-                    spinMusic.play().catch(e => console.log(e));
-                }
+                if (!isSpinning) bgMusic.play().catch(e => console.log("Cần tương tác để phát nhạc"));
+                else spinMusic.play().catch(e => console.log(e));
             }
-            
             updateSoundButtonUI();
         }
 
@@ -711,9 +546,7 @@ Hồng Châu, 25
         }
         
         function handleKeyPress(event) {
-            if (event.key === 'Enter' && !document.getElementById('btn-spin').disabled) {
-                startSpin();
-            }
+            if (event.key === 'Enter' && !document.getElementById('btn-spin').disabled) startSpin();
         }
 
         function saveData(showAlert = true) {
@@ -721,10 +554,7 @@ Hồng Châu, 25
             if (!raw) { alert('Vui lòng nhập danh sách!'); return; }
             
             const lines = raw.split('\n').filter(line => line.trim());
-            playerList = [];
-            giftMap = {};
-            allGiftNumbers = [];
-            drawnNumbers = [];
+            playerList = []; giftMap = {}; allGiftNumbers = []; drawnNumbers = [];
             const usedNumbers = new Set();
             
             lines.forEach(line => {
@@ -732,7 +562,6 @@ Hồng Châu, 25
                 if (parts.length >= 2) {
                     const nameRaw = parts[0];
                     const giftNumbers = [];
-                    
                     for (let i = 1; i < parts.length; i++) {
                         const num = parseInt(parts[i]);
                         if (!isNaN(num) && num > 0) {
@@ -744,7 +573,6 @@ Hồng Châu, 25
                             }
                         }
                     }
-                    
                     if (nameRaw && giftNumbers.length > 0) {
                         playerList.push({
                             name: nameRaw.trim(),
@@ -755,14 +583,9 @@ Hồng Châu, 25
                 }
             });
             
-            if (playerList.length === 0) { 
-                alert('Không có dữ liệu hợp lệ!'); 
-                return; 
-            }
-            
+            if (playerList.length === 0) { alert('Không có dữ liệu hợp lệ!'); return; }
             resetGame();
             document.getElementById('my_modal_1').close();
-            
             if (showAlert) alert(`✅ Đã cập nhật: ${playerList.length} người với ${allGiftNumbers.length} món quà.`);
         }
 
@@ -805,28 +628,19 @@ Hồng Châu, 25
 
         function startSpin() {
             if (isSpinning) return;
-
             bgMusic.pause();
-            
-            if(!isMuted) {
-                spinMusic.currentTime = 0;
-                spinMusic.play();
-            }
+            if(!isMuted) { spinMusic.currentTime = 0; spinMusic.play(); }
 
             const inputVal = DOM.currentPlayer.value;
             const currentPlayer = playerList.find(p => p.searchKey === normalizeStr(inputVal));
-            
             const drawnSet = new Set(drawnNumbers);
             const excludeNumbers = currentPlayer ? new Set(currentPlayer.giftNumbers) : new Set();
-            
-            let availableNumbers = allGiftNumbers.filter(num => 
-                !drawnSet.has(num) && !excludeNumbers.has(num)
-            );
+            let availableNumbers = allGiftNumbers.filter(num => !drawnSet.has(num) && !excludeNumbers.has(num));
 
             if (availableNumbers.length === 0) {
                 const remaining = allGiftNumbers.filter(num => !drawnSet.has(num));
                 if (remaining.length > 0) {
-                    alert("Chỉ còn lại quà của chính bạn! Hãy hoán đổi với người khác.");
+                    alert("Chỉ còn lại quà 1 phần quà! Hãy hoán đổi với người khác.");
                     availableNumbers = remaining;
                 } else {
                     alert("Đã hết quà rồi!");
@@ -849,10 +663,7 @@ Hồng Châu, 25
             boxes.forEach(box => box.classList.add('spinning'));
             
             const revealDigit = (box, digit, value) => {
-                if (digit._animFrame) {
-                    cancelAnimationFrame(digit._animFrame);
-                    digit._animFrame = null;
-                }
+                if (digit._animFrame) { cancelAnimationFrame(digit._animFrame); digit._animFrame = null; }
                 digit.textContent = value;
                 box.classList.remove('spinning');
                 box.style.background = '#FF6B6B';
@@ -864,9 +675,8 @@ Hồng Châu, 25
 
             digits.forEach(digit => {
                 let lastUpdate = 0;
-                const frameInterval = window.innerWidth <= 1024 ? 80 : 50; // Slower on tablets
                 const animate = (timestamp) => {
-                    if (timestamp - lastUpdate >= frameInterval) { 
+                    if (timestamp - lastUpdate >= 50) { 
                         digit.textContent = Math.floor(Math.random() * 10);
                         lastUpdate = timestamp;
                     }
@@ -878,9 +688,7 @@ Hồng Châu, 25
             [1500, 2500, 3500].forEach((time, i) => {
                 setTimeout(() => {
                     revealDigit(boxes[i], digits[i], winnerStr[i]);
-                    if (i === 2) {
-                        setTimeout(() => finalizeSpin(winnerNum, currentPlayer?.name || "Khách Mời"), 300);
-                    }
+                    if (i === 2) setTimeout(() => finalizeSpin(winnerNum, currentPlayer?.name || "Khách Mời"), 300);
                 }, time);
             });
         }
@@ -888,70 +696,50 @@ Hồng Châu, 25
         function finalizeSpin(number, playerName) {
             isSpinning = false;
             drawnNumbers.push(number);
-
             spinMusic.pause();
-
-            // --- LOGIC ÂM THANH TỐI ƯU (KHÔNG LẶP) ---
             if (!isMuted) {
-                // Lấy âm thanh tiếp theo từ queue shuffle
                 const soundIndex = getNextWinSound();
-                const soundPath = `sound_trung (${soundIndex}).mp3`;
-                
-                winAudio = new Audio(soundPath);
-                winAudio.loop = false;
-                winAudio.volume = 1.0;
-                winAudio.play().catch(e => console.log("Lỗi phát âm thanh chiến thắng:", e));
+                winAudio = new Audio(`sound_trung (${soundIndex}).mp3`);
+                winAudio.play().catch(e => console.log("Lỗi phát âm thanh:", e));
             }
-
             setTimeout(() => {
                 if(winAudio) winAudio.pause();
                 if(!isMuted) bgMusic.play();
             }, 6000);
 
             runFireworks(); 
-            
             const giftOwner = giftMap[number] || "???";
             updateHistory(number, playerName, giftOwner);
             updateCount();
         }
 
         function runFireworks() {
-            const duration = 2500; // Reduced duration
+            const duration = 3000;
             const animationEnd = Date.now() + duration;
             const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FFFFFF', '#DDA0DD'];
-            
-            // Detect if tablet/mobile for reduced particles
-            const isTablet = window.innerWidth <= 1024;
-            const baseParticles = isTablet ? 25 : 40;
-
             const interval = setInterval(() => {
                 const timeLeft = animationEnd - Date.now();
                 if (timeLeft <= 0) { clearInterval(interval); return; }
-                
-                const particleCount = Math.floor(baseParticles * (timeLeft / duration));
-                
+                const particleCount = Math.floor(40 * (timeLeft / duration));
                 confetti({
                     particleCount: particleCount,
-                    startVelocity: isTablet ? 25 : 30,
+                    startVelocity: 30,
                     spread: 360,
                     origin: { x: Math.random(), y: Math.random() - 0.2 },
                     colors,
                     zIndex: 9999,
-                    shapes: ['square', 'circle'],
-                    disableForReducedMotion: true // Respect user preference
+                    shapes: ['square', 'circle']
                 });
-            }, isTablet ? 300 : 250); // Slower interval on tablets
+            }, 250);
         }
 
         function updateHistory(number, playerName, giftOwner) {
             const ul = DOM.historyList;
-            const emptyState = DOM.emptyState;
-            if (emptyState) emptyState.style.display = 'none';
+            if (DOM.emptyState) DOM.emptyState.style.display = 'none';
 
             const li = document.createElement('li');
             li.className = 'history-item flex justify-between items-center px-4 py-3';
             const numStr = number.toString().padStart(3, '0');
-            
             li.innerHTML = `
                 <div class="flex flex-col">
                     <span class="font-bold text-pop-dark truncate text-lg">${playerName}</span>
@@ -960,34 +748,22 @@ Hồng Châu, 25
                     <span class="font-fun text-2xl text-pop-primary font-bold bg-red-50 px-3 py-1 rounded-xl border border-red-100 shadow-sm">${numStr}</span>
                 </div>
             `;
-            
             ul.prepend(li);
         }
 
         function nextPerson() {
             if (isSpinning) return;
             const input = DOM.currentPlayer;
-            input.value = "";
-            input.disabled = false;
-            
+            input.value = ""; input.disabled = false;
             ['box-1', 'box-2', 'box-3'].forEach((boxId, i) => {
                 const box = document.getElementById(boxId);
                 const digit = document.getElementById(`digit-${i + 1}`);
-                
-                if (digit._animFrame) {
-                    cancelAnimationFrame(digit._animFrame);
-                    digit._animFrame = null;
-                }
-                
+                if (digit._animFrame) { cancelAnimationFrame(digit._animFrame); digit._animFrame = null; }
                 digit.textContent = "?";
-                box.style.background = '';
-                box.style.color = '';
-                box.style.borderColor = '';
-                box.style.transform = '';
+                box.style.background = ''; box.style.color = ''; box.style.borderColor = ''; box.style.transform = '';
                 box.classList.remove('spinning');
             });
-            
-            DOM.playerMsg.innerHTML = "Hãy nhập tên để thần tài gõ cửa...";
+            DOM.playerMsg.innerHTML = "Hãy nhập tên để may mắn gõ cửa...";
             DOM.playerMsg.className = "h-6 text-center font-bold text-sm text-gray-500 transition-all italic";
             DOM.btnSpin.disabled = true;
             input.focus();
