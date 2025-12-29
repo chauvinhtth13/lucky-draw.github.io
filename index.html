@@ -55,137 +55,181 @@
             font-family: 'Nunito', sans-serif;
             overflow: hidden;
             background-color: #ff9a9e;
+            /* Enable GPU compositing for smoother scrolling */
+            -webkit-overflow-scrolling: touch;
         }
 
         /* =========================================
            OPTIMIZED BACKGROUND EFFECTS START
         ========================================= */
 
-        /* LAYER 1: Smooth Gradient Flow - Much lighter on GPU */
+        /* LAYER 1: Smooth Gradient Flow - Optimized for GPU */
         .bg-animated {
             position: fixed;
             inset: 0;
             z-index: -5;
             background: linear-gradient(-45deg, #FF9A9E, #FECFEF, #E0C3FC, #8EC5FC);
-            background-size: 300% 300%;
-            animation: gradientBG 15s ease infinite;
+            background-size: 200% 200%; /* Reduced from 300% for better performance */
+            animation: gradientBG 20s ease infinite; /* Slower = smoother */
+            transform: translateZ(0); /* Force GPU layer */
+            backface-visibility: hidden;
         }
         
         @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
+            0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
 
-        /* Removed bg-noise for cleaner look and performance */
-
-        /* LAYER 3: Bokeh Lights - Reduced count & complexity */
+        /* LAYER 3: Bokeh Lights - GPU optimized */
         .bokeh-container {
             position: fixed;
             inset: 0;
             z-index: -3;
             pointer-events: none;
+            transform: translateZ(0);
+            contain: layout style paint; /* CSS containment for performance */
         }
         .bokeh {
             position: absolute;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
-            will-change: transform, opacity;
+            background: radial-gradient(circle, rgba(255,255,255,0.35) 0%, transparent 70%);
             animation: floatBokeh ease-in-out infinite alternate;
+            transform: translateZ(0);
+            backface-visibility: hidden;
         }
-        /* Reduced from 5 to 3 items */
-        .bokeh:nth-child(1) { top: 10%; left: 10%; width: 150px; height: 150px; animation-duration: 20s; opacity: 0.6; }
-        .bokeh:nth-child(2) { top: 70%; left: 80%; width: 200px; height: 200px; animation-duration: 25s; animation-delay: -5s; opacity: 0.5; }
-        .bokeh:nth-child(3) { top: 40%; left: 40%; width: 100px; height: 100px; animation-duration: 18s; animation-delay: -10s; opacity: 0.4; }
+        .bokeh:nth-child(1) { top: 10%; left: 10%; width: 120px; height: 120px; animation-duration: 25s; opacity: 0.5; }
+        .bokeh:nth-child(2) { top: 70%; left: 80%; width: 160px; height: 160px; animation-duration: 30s; animation-delay: -5s; opacity: 0.4; }
+        .bokeh:nth-child(3) { top: 40%; left: 40%; width: 80px; height: 80px; animation-duration: 22s; animation-delay: -10s; opacity: 0.35; }
 
         @keyframes floatBokeh {
-            0% { transform: translate3d(0, 0, 0); }
-            100% { transform: translate3d(30px, -30px, 0); }
+            0% { transform: translate3d(0, 0, 0) scale(1); }
+            100% { transform: translate3d(20px, -20px, 0) scale(1.05); }
         }
 
-        /* LAYER 4: Floating Geometric Shapes - Reduced count */
+        /* LAYER 4: Floating Geometric Shapes - Simplified */
         .shapes-container {
             position: fixed;
             inset: 0;
             z-index: -2;
             pointer-events: none;
+            transform: translateZ(0);
+            contain: layout style paint;
         }
         .floating-shape {
             position: absolute;
-            opacity: 0.6;
+            opacity: 0.5;
             animation: shapeFloat linear infinite;
-            will-change: transform;
+            transform: translateZ(0);
+            backface-visibility: hidden;
         }
-        .shape-sq { width: 30px; height: 30px; background: #FFE66D; border-radius: 4px; }
-        .shape-cir { width: 25px; height: 25px; border-radius: 50%; border: 4px solid #FF6B6B; }
+        .shape-sq { width: 25px; height: 25px; background: #FFE66D; border-radius: 4px; }
+        .shape-cir { width: 20px; height: 20px; border-radius: 50%; border: 3px solid #FF6B6B; background: transparent; }
 
-        /* Reduced from 5 to 3 items */
-        .floating-shape:nth-child(1) { top: 20%; left: 5%; animation-duration: 25s; }
-        .floating-shape:nth-child(2) { top: 80%; left: 85%; animation-duration: 30s; animation-direction: reverse; }
-        .floating-shape:nth-child(3) { top: 15%; left: 70%; animation-duration: 28s; }
+        .floating-shape:nth-child(1) { top: 20%; left: 5%; animation-duration: 30s; }
+        .floating-shape:nth-child(2) { top: 80%; left: 85%; animation-duration: 35s; animation-direction: reverse; }
+        .floating-shape:nth-child(3) { top: 15%; left: 70%; animation-duration: 32s; }
 
         @keyframes shapeFloat {
-            0% { transform: translate3d(0, 50px, 0) rotate(0deg); opacity: 0; }
-            20% { opacity: 0.6; }
-            80% { opacity: 0.6; }
-            100% { transform: translate3d(0, -50px, 0) rotate(360deg); opacity: 0; }
+            0% { transform: translate3d(0, 40px, 0) rotate(0deg); opacity: 0; }
+            15% { opacity: 0.5; }
+            85% { opacity: 0.5; }
+            100% { transform: translate3d(0, -40px, 0) rotate(360deg); opacity: 0; }
         }
 
-        /* LAYER 5: Blobs - Reduced count from 4 to 2 for performance */
+        /* LAYER 5: Blobs - Static on tablets for performance */
         .blob {
             position: absolute;
             border-radius: 50%;
-            opacity: 0.5;
+            opacity: 0.4;
             z-index: -1;
-            animation: blobMove 20s infinite alternate ease-in-out;
-            will-change: transform;
+            animation: blobMove 25s infinite alternate ease-in-out;
+            transform: translateZ(0);
+            backface-visibility: hidden;
         }
         .blob-1 { 
-            top: -10%; left: -10%; width: 500px; height: 500px; 
+            top: -10%; left: -10%; width: 400px; height: 400px; 
             background: radial-gradient(circle, #FF9A9E 0%, transparent 70%);
         }
         .blob-2 { 
-            bottom: -10%; right: -10%; width: 400px; height: 400px; 
+            bottom: -10%; right: -10%; width: 350px; height: 350px; 
             background: radial-gradient(circle, #A18CD1 0%, transparent 70%);
-            animation-delay: -10s;
+            animation-delay: -12s;
         }
 
         @keyframes blobMove {
             0% { transform: translate3d(0, 0, 0) scale(1); }
-            100% { transform: translate3d(30px, 30px, 0) scale(1.1); }
+            100% { transform: translate3d(20px, 20px, 0) scale(1.05); }
         }
 
-        /* LAYER 6: Emoji Rain - Reduced density */
+        /* LAYER 6: Emoji Rain - Reduced for smooth performance */
         .emoji-container {
             position: fixed;
             inset: 0;
             z-index: 0;
             pointer-events: none;
             overflow: hidden;
+            transform: translateZ(0);
+            contain: layout style paint;
         }
         
         .emoji-particle {
             position: absolute;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             user-select: none;
-            opacity: 0.7; /* More subtle */
+            opacity: 0.6;
             animation: floatEmoji linear infinite;
-            will-change: transform;
+            transform: translateZ(0);
+            backface-visibility: hidden;
         }
 
-        /* Reduced from 12 to 6 items */
-        .emoji-particle:nth-child(1) { left: 10%; animation-duration: 18s; animation-delay: 0s; }
-        .emoji-particle:nth-child(2) { left: 30%; animation-duration: 22s; animation-delay: 5s; font-size: 2.2rem; }
-        .emoji-particle:nth-child(3) { left: 50%; animation-duration: 15s; animation-delay: 2s; }
-        .emoji-particle:nth-child(4) { left: 70%; animation-duration: 20s; animation-delay: 8s; font-size: 2rem; }
-        .emoji-particle:nth-child(5) { left: 90%; animation-duration: 25s; animation-delay: 1s; }
-        .emoji-particle:nth-child(6) { left: 20%; animation-duration: 28s; animation-delay: 10s; opacity: 0.5; }
+        .emoji-particle:nth-child(1) { left: 10%; animation-duration: 22s; animation-delay: 0s; }
+        .emoji-particle:nth-child(2) { left: 30%; animation-duration: 26s; animation-delay: 6s; font-size: 1.8rem; }
+        .emoji-particle:nth-child(3) { left: 50%; animation-duration: 20s; animation-delay: 3s; }
+        .emoji-particle:nth-child(4) { left: 70%; animation-duration: 24s; animation-delay: 9s; font-size: 1.7rem; }
+        .emoji-particle:nth-child(5) { left: 90%; animation-duration: 28s; animation-delay: 2s; }
+        .emoji-particle:nth-child(6) { left: 20%; animation-duration: 32s; animation-delay: 12s; opacity: 0.4; }
 
         @keyframes floatEmoji {
-            0% { transform: translate3d(0, 110vh, 0) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.7; }
-            90% { opacity: 0.7; }
-            100% { transform: translate3d(0, -10vh, 0) rotate(20deg); opacity: 0; }
+            0% { transform: translate3d(0, 105vh, 0) rotate(0deg); opacity: 0; }
+            8% { opacity: 0.6; }
+            92% { opacity: 0.6; }
+            100% { transform: translate3d(0, -5vh, 0) rotate(15deg); opacity: 0; }
+        }
+
+        /* =========================================
+           TABLET & MOBILE OPTIMIZATIONS
+        ========================================= */
+        @media (max-width: 1024px) {
+            /* Reduce animation complexity on tablets */
+            .bokeh { animation-duration: 35s !important; }
+            .floating-shape { animation-duration: 40s !important; }
+            .blob { animation: none !important; } /* Static blobs on tablet */
+            .emoji-particle { 
+                animation-duration: 30s !important;
+                font-size: 1.3rem !important;
+                opacity: 0.5 !important;
+            }
+            .bg-animated { animation-duration: 30s; }
+        }
+
+        @media (max-width: 768px) {
+            /* Further reduce on smaller tablets/phones */
+            .bokeh-container .bokeh:nth-child(3) { display: none; }
+            .shapes-container .floating-shape:nth-child(3) { display: none; }
+            .emoji-container .emoji-particle:nth-child(5),
+            .emoji-container .emoji-particle:nth-child(6) { display: none; }
+            .blob { opacity: 0.3; }
+        }
+
+        /* Reduce motion for users who prefer it */
+        @media (prefers-reduced-motion: reduce) {
+            .bg-animated,
+            .bokeh,
+            .floating-shape,
+            .blob,
+            .emoji-particle {
+                animation: none !important;
+            }
         }
         /* =========================================
            OPTIMIZED BACKGROUND EFFECTS END
@@ -194,14 +238,34 @@
 
         /* ===== CARD STYLES ===== */
         .glass-card {
-            background: rgba(255, 255, 255, 0.75); /* Slightly more opaque for better readability */
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.8); /* More opaque = less GPU work */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 4px solid #292F36;
             border-radius: 30px;
             box-shadow: 10px 10px 0px 0px rgba(41, 47, 54, 0.8);
             position: relative; 
-            z-index: 50; 
+            z-index: 50;
+            transform: translateZ(0); /* GPU layer */
+        }
+
+        /* Reduce backdrop-filter on tablets for performance */
+        @media (max-width: 1024px) {
+            .glass-card {
+                background: rgba(255, 255, 255, 0.92);
+                backdrop-filter: blur(6px);
+                -webkit-backdrop-filter: blur(6px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .glass-card {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
+                border-radius: 20px;
+                padding: 1rem;
+            }
         }
 
         .digit-box {
@@ -221,18 +285,39 @@
             transition: all 0.2s ease;
             line-height: 1;
             padding-top: 10px;
+            transform: translateZ(0); /* GPU acceleration */
         }
         
         .digit-box.spinning {
             background: #ffffff;
             color: #FF6B6B;
-            animation: shake 0.5s ease-in-out infinite;
+            animation: shake 0.4s ease-in-out infinite;
         }
 
         @keyframes shake {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-3deg); }
-            75% { transform: rotate(3deg); }
+            0%, 100% { transform: translateZ(0) rotate(0deg); }
+            25% { transform: translateZ(0) rotate(-2deg); }
+            75% { transform: translateZ(0) rotate(2deg); }
+        }
+
+        /* Tablet responsive digit boxes */
+        @media (max-width: 1024px) {
+            .digit-box {
+                width: 75px;
+                height: 100px;
+                font-size: 4rem;
+                border-radius: 16px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .digit-box {
+                width: 60px;
+                height: 85px;
+                font-size: 3rem;
+                border-radius: 14px;
+                border-width: 3px;
+            }
         }
 
         .btn-blocky {
@@ -352,6 +437,21 @@
         <div class="emoji-particle">🎉</div>
         <div class="emoji-particle">💖</div>
     </div>
+
+    <!-- Overlay Click to Start -->
+    <div id="start-overlay" class="fixed inset-0 z-[100] bg-gradient-to-br from-pop-primary/90 via-pop-secondary/90 to-pop-yellow/90 flex items-center justify-center cursor-pointer" onclick="startApp()">
+        <div class="text-center animate-pulse">
+            <div class="text-8xl mb-6">🎉</div>
+            <h2 class="font-fun text-4xl md:text-5xl text-white font-extrabold drop-shadow-lg mb-4">YEAR END PARTY 2025</h2>
+            <p class="text-white/90 text-xl font-bold mb-8">Trao quà liền tay - Vận may sẽ tới</p>
+            <div class="inline-flex items-center gap-3 bg-white text-pop-dark px-8 py-4 rounded-2xl font-bold text-xl shadow-block hover:shadow-block-sm hover:translate-x-1 hover:translate-y-1 transition-all">
+                <i class="fa-solid fa-play"></i>
+                <span>Nhấn để bắt đầu</span>
+            </div>
+            <p class="text-white/70 text-sm mt-4"><i class="fa-solid fa-volume-high mr-2"></i>Âm thanh sẽ tự động phát</p>
+        </div>
+    </div>
+
     <div class="w-full max-w-5xl glass-card p-6 md:p-10 flex flex-col gap-8 animate-pop-in">
         
         <div class="flex justify-between items-start">
@@ -546,39 +646,63 @@ Hồng Châu, 25
         window.onload = function() {
             document.getElementById('input-list').value = defaultData;
             saveData(false);
-            
-            // Tự động bật nhạc khi click lần đầu nếu chưa mute
-            document.body.addEventListener('click', () => {
-                if(!isMuted && bgMusic.paused) {
-                    bgMusic.play().catch(e => console.log(e));
-                }
-            }, { once: true });
+            // Không tự động phát nhạc - chờ người dùng click overlay
         }
 
-        function toggleSound() {
-            isMuted = !isMuted;
+        // Hàm khởi động app khi click overlay
+        function startApp() {
+            const overlay = document.getElementById('start-overlay');
+            
+            // Ẩn overlay với animation
+            overlay.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            overlay.style.opacity = '0';
+            overlay.style.transform = 'scale(1.1)';
+            
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 500);
+            
+            // Phát nhạc nền ngay lập tức
+            if (!isMuted) {
+                bgMusic.play().catch(e => console.log("Lỗi phát nhạc:", e));
+            }
+            
+            // Focus vào ô nhập tên
+            DOM.currentPlayer.focus();
+        }
+
+        // Cập nhật UI nút âm thanh
+        function updateSoundButtonUI() {
             const icon = document.getElementById('icon-sound');
             const btn = document.getElementById('btn-sound');
             
             if (isMuted) {
-                // Tắt nhạc
-                bgMusic.pause();
-                spinMusic.pause();
-                if(winAudio) winAudio.pause();
-                
                 icon.className = 'fa-solid fa-volume-xmark text-gray-500 text-xl group-hover:scale-110 transition-transform';
                 btn.className = 'w-12 h-12 bg-gray-100 border-2 border-gray-400 rounded-xl flex items-center justify-center shadow-none transition-all group';
             } else {
-                // Bật nhạc
-                if (!isSpinning) {
-                    bgMusic.play().catch(e => console.log("Cần tương tác người dùng để phát nhạc"));
-                } else {
-                    spinMusic.play().catch(e => console.log(e));
-                }
-                
                 icon.className = 'fa-solid fa-volume-high text-pop-dark text-xl group-hover:scale-110 transition-transform';
                 btn.className = 'w-12 h-12 bg-white border-2 border-pop-dark rounded-xl flex items-center justify-center shadow-block-sm hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all group';
             }
+        }
+
+        function toggleSound() {
+            isMuted = !isMuted;
+            
+            if (isMuted) {
+                // Tắt tất cả âm thanh
+                bgMusic.pause();
+                spinMusic.pause();
+                if(winAudio) winAudio.pause();
+            } else {
+                // Bật nhạc phù hợp với trạng thái hiện tại
+                if (!isSpinning) {
+                    bgMusic.play().catch(e => console.log("Cần tương tác để phát nhạc"));
+                } else {
+                    spinMusic.play().catch(e => console.log(e));
+                }
+            }
+            
+            updateSoundButtonUI();
         }
 
         function normalizeStr(str) {
@@ -740,8 +864,9 @@ Hồng Châu, 25
 
             digits.forEach(digit => {
                 let lastUpdate = 0;
+                const frameInterval = window.innerWidth <= 1024 ? 80 : 50; // Slower on tablets
                 const animate = (timestamp) => {
-                    if (timestamp - lastUpdate >= 50) { 
+                    if (timestamp - lastUpdate >= frameInterval) { 
                         digit.textContent = Math.floor(Math.random() * 10);
                         lastUpdate = timestamp;
                     }
@@ -791,26 +916,31 @@ Hồng Châu, 25
         }
 
         function runFireworks() {
-            const duration = 3000;
+            const duration = 2500; // Reduced duration
             const animationEnd = Date.now() + duration;
             const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FFFFFF', '#DDA0DD'];
+            
+            // Detect if tablet/mobile for reduced particles
+            const isTablet = window.innerWidth <= 1024;
+            const baseParticles = isTablet ? 25 : 40;
 
             const interval = setInterval(() => {
                 const timeLeft = animationEnd - Date.now();
                 if (timeLeft <= 0) { clearInterval(interval); return; }
                 
-                const particleCount = Math.floor(40 * (timeLeft / duration));
+                const particleCount = Math.floor(baseParticles * (timeLeft / duration));
                 
                 confetti({
                     particleCount: particleCount,
-                    startVelocity: 30,
+                    startVelocity: isTablet ? 25 : 30,
                     spread: 360,
                     origin: { x: Math.random(), y: Math.random() - 0.2 },
                     colors,
                     zIndex: 9999,
-                    shapes: ['square', 'circle']
+                    shapes: ['square', 'circle'],
+                    disableForReducedMotion: true // Respect user preference
                 });
-            }, 250);
+            }, isTablet ? 300 : 250); // Slower interval on tablets
         }
 
         function updateHistory(number, playerName, giftOwner) {
