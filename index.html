@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html lang="vi" data-theme="lemonade">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>YEP 2025 - Gift Exchange</title>
+    <title>YEP 2025 - Gift Exchange Party</title>
     
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.6.0/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <script>
@@ -33,16 +31,16 @@
                         }
                     },
                     boxShadow: {
-                        'block': '4px 4px 0px 0px rgba(41, 47, 54, 1)', 
-                        'block-sm': '2px 2px 0px 0px rgba(41, 47, 54, 1)',
+                        'block': '6px 6px 0px 0px rgba(41, 47, 54, 1)', 
+                        'block-sm': '3px 3px 0px 0px rgba(41, 47, 54, 1)',
                     },
                     animation: {
-                        'pop-in': 'popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                        'pop-in': 'popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                     },
                     keyframes: {
                         popIn: {
-                            '0%': { transform: 'scale(0.8)', opacity: '0' },
-                            '100%': { transform: 'scale(1)', opacity: '1' },
+                            '0%': { transform: 'scale(0.8) translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'scale(1) translateY(0)', opacity: '1' },
                         }
                     }
                 }
@@ -56,86 +54,162 @@
         body {
             font-family: 'Nunito', sans-serif;
             overflow: hidden;
+            background-color: #ff9a9e;
         }
 
-        .area {
+        /* =========================================
+           OPTIMIZED BACKGROUND EFFECTS START
+        ========================================= */
+
+        /* LAYER 1: Smooth Gradient Flow - Much lighter on GPU */
+        .bg-animated {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: linear-gradient(-45deg, #FF6B6B, #4ECDC4, #FFE66D, #ffffff);
-            background-size: 400% 400%;
+            inset: 0;
+            z-index: -5;
+            background: linear-gradient(-45deg, #FF9A9E, #FECFEF, #E0C3FC, #8EC5FC);
+            background-size: 300% 300%;
             animation: gradientBG 15s ease infinite;
-            z-index: 0; 
         }
-
+        
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        .circles {
+        /* Removed bg-noise for cleaner look and performance */
+
+        /* LAYER 3: Bokeh Lights - Reduced count & complexity */
+        .bokeh-container {
+            position: fixed;
+            inset: 0;
+            z-index: -3;
+            pointer-events: none;
+        }
+        .bokeh {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
+            will-change: transform, opacity;
+            animation: floatBokeh ease-in-out infinite alternate;
+        }
+        /* Reduced from 5 to 3 items */
+        .bokeh:nth-child(1) { top: 10%; left: 10%; width: 150px; height: 150px; animation-duration: 20s; opacity: 0.6; }
+        .bokeh:nth-child(2) { top: 70%; left: 80%; width: 200px; height: 200px; animation-duration: 25s; animation-delay: -5s; opacity: 0.5; }
+        .bokeh:nth-child(3) { top: 40%; left: 40%; width: 100px; height: 100px; animation-duration: 18s; animation-delay: -10s; opacity: 0.4; }
+
+        @keyframes floatBokeh {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(30px, -30px, 0); }
+        }
+
+        /* LAYER 4: Floating Geometric Shapes - Reduced count */
+        .shapes-container {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            pointer-events: none;
+        }
+        .floating-shape {
+            position: absolute;
+            opacity: 0.6;
+            animation: shapeFloat linear infinite;
+            will-change: transform;
+        }
+        .shape-sq { width: 30px; height: 30px; background: #FFE66D; border-radius: 4px; }
+        .shape-cir { width: 25px; height: 25px; border-radius: 50%; border: 4px solid #FF6B6B; }
+
+        /* Reduced from 5 to 3 items */
+        .floating-shape:nth-child(1) { top: 20%; left: 5%; animation-duration: 25s; }
+        .floating-shape:nth-child(2) { top: 80%; left: 85%; animation-duration: 30s; animation-direction: reverse; }
+        .floating-shape:nth-child(3) { top: 15%; left: 70%; animation-duration: 28s; }
+
+        @keyframes shapeFloat {
+            0% { transform: translate3d(0, 50px, 0) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.6; }
+            80% { opacity: 0.6; }
+            100% { transform: translate3d(0, -50px, 0) rotate(360deg); opacity: 0; }
+        }
+
+        /* LAYER 5: Blobs - Reduced count from 4 to 2 for performance */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.5;
+            z-index: -1;
+            animation: blobMove 20s infinite alternate ease-in-out;
+            will-change: transform;
+        }
+        .blob-1 { 
+            top: -10%; left: -10%; width: 500px; height: 500px; 
+            background: radial-gradient(circle, #FF9A9E 0%, transparent 70%);
+        }
+        .blob-2 { 
+            bottom: -10%; right: -10%; width: 400px; height: 400px; 
+            background: radial-gradient(circle, #A18CD1 0%, transparent 70%);
+            animation-delay: -10s;
+        }
+
+        @keyframes blobMove {
+            0% { transform: translate3d(0, 0, 0) scale(1); }
+            100% { transform: translate3d(30px, 30px, 0) scale(1.1); }
+        }
+
+        /* LAYER 6: Emoji Rain - Reduced density */
+        .emoji-container {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
             overflow: hidden;
         }
-
-        .circles li {
+        
+        .emoji-particle {
             position: absolute;
-            display: block;
-            list-style: none;
-            width: 20px;
-            height: 20px;
-            background: rgba(255, 255, 255, 0.6);
-            animation: animate 25s linear infinite;
-            bottom: -150px;
-            border-radius: 4px;
+            font-size: 1.8rem;
+            user-select: none;
+            opacity: 0.7; /* More subtle */
+            animation: floatEmoji linear infinite;
+            will-change: transform;
         }
 
-        .circles li:nth-child(1) { left: 25%; width: 80px; height: 80px; animation-delay: 0s; background: rgba(78, 205, 196, 0.6); }
-        .circles li:nth-child(2) { left: 10%; width: 20px; height: 20px; animation-delay: 2s; animation-duration: 12s; background: rgba(255, 107, 107, 0.6); }
-        .circles li:nth-child(3) { left: 70%; width: 20px; height: 20px; animation-delay: 4s; background: rgba(255, 230, 109, 0.6); }
-        .circles li:nth-child(4) { left: 40%; width: 60px; height: 60px; animation-delay: 0s; animation-duration: 18s; background: rgba(255, 255, 255, 0.5); }
-        .circles li:nth-child(5) { left: 65%; width: 20px; height: 20px; animation-delay: 0s; background: rgba(41, 47, 54, 0.2); }
-        .circles li:nth-child(6) { left: 75%; width: 110px; height: 110px; animation-delay: 3s; background: rgba(78, 205, 196, 0.5); }
-        .circles li:nth-child(7) { left: 35%; width: 150px; height: 150px; animation-delay: 7s; background: rgba(255, 107, 107, 0.4); }
-        .circles li:nth-child(8) { left: 50%; width: 25px; height: 25px; animation-delay: 15s; animation-duration: 45s; }
-        .circles li:nth-child(9) { left: 20%; width: 15px; height: 15px; animation-delay: 2s; animation-duration: 35s; background: rgba(255, 230, 109, 0.5); }
-        .circles li:nth-child(10){ left: 85%; width: 150px; height: 150px; animation-delay: 0s; animation-duration: 11s; background: rgba(78, 205, 196, 0.4); }
+        /* Reduced from 12 to 6 items */
+        .emoji-particle:nth-child(1) { left: 10%; animation-duration: 18s; animation-delay: 0s; }
+        .emoji-particle:nth-child(2) { left: 30%; animation-duration: 22s; animation-delay: 5s; font-size: 2.2rem; }
+        .emoji-particle:nth-child(3) { left: 50%; animation-duration: 15s; animation-delay: 2s; }
+        .emoji-particle:nth-child(4) { left: 70%; animation-duration: 20s; animation-delay: 8s; font-size: 2rem; }
+        .emoji-particle:nth-child(5) { left: 90%; animation-duration: 25s; animation-delay: 1s; }
+        .emoji-particle:nth-child(6) { left: 20%; animation-duration: 28s; animation-delay: 10s; opacity: 0.5; }
 
-        @keyframes animate {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; border-radius: 4px; }
-            100% { transform: translateY(-120vh) rotate(720deg); opacity: 0; border-radius: 50%; }
+        @keyframes floatEmoji {
+            0% { transform: translate3d(0, 110vh, 0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translate3d(0, -10vh, 0) rotate(20deg); opacity: 0; }
         }
+        /* =========================================
+           OPTIMIZED BACKGROUND EFFECTS END
+        ========================================= */
 
-        .flat-card {
-            background: #ffffff;
-            border: 3px solid #292F36;
-            border-radius: 24px;
-            box-shadow: 8px 8px 0px 0px rgba(41, 47, 54, 0.2);
+
+        /* ===== CARD STYLES ===== */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75); /* Slightly more opaque for better readability */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 4px solid #292F36;
+            border-radius: 30px;
+            box-shadow: 10px 10px 0px 0px rgba(41, 47, 54, 0.8);
             position: relative; 
             z-index: 50; 
         }
-
-        .shape-blob {
-            position: absolute;
-            z-index: 10;
-            opacity: 0.8;
-            animation: float 8s ease-in-out infinite;
-        }
-        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
 
         .digit-box {
             width: 90px; 
             height: 120px;
             background: #FFE66D;
-            border: 3px solid #292F36;
-            border-radius: 16px;
+            border: 4px solid #292F36;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -144,37 +218,49 @@
             font-weight: 800;
             color: #292F36;
             box-shadow: 4px 4px 0px 0px #292F36;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.2s ease;
             line-height: 1;
             padding-top: 10px;
-            will-change: transform, background, color, border-color;
         }
         
         .digit-box.spinning {
             background: #ffffff;
             color: #FF6B6B;
-            animation: pulse 0.5s ease-in-out infinite;
+            animation: shake 0.5s ease-in-out infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-3deg); }
+            75% { transform: rotate(3deg); }
         }
 
         .btn-blocky {
             border: 3px solid #292F36;
-            border-radius: 12px;
+            border-radius: 16px;
             font-weight: 800;
             text-transform: uppercase;
-            box-shadow: 4px 4px 0px 0px #292F36;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 5px 5px 0px 0px #292F36;
+            transition: all 0.1s ease;
             font-family: 'Baloo 2', cursive;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
+        .btn-blocky::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.5s;
+        }
+        .btn-blocky:hover::after { left: 100%; }
+        
         .btn-blocky:not(:disabled):active {
             transform: translate(4px, 4px);
-            box-shadow: 0px 0px 0px 0px #292F36;
+            box-shadow: 1px 1px 0px 0px #292F36;
         }
         .btn-blocky:disabled {
             background: #e5e7eb !important;
@@ -182,16 +268,20 @@
             border-color: #d1d5db !important;
             box-shadow: 2px 2px 0px 0px #d1d5db !important;
             cursor: not-allowed;
-            transform: none !important;
-            opacity: 0.6;
+            opacity: 0.8;
+        }
+        .btn-blocky:not(:disabled):hover { 
+            transform: translate(2px, 2px); 
+            box-shadow: 3px 3px 0px 0px #292F36; 
         }
 
         .input-flat {
             border: 3px solid #292F36;
-            border-radius: 12px;
-            box-shadow: 4px 4px 0px 0px rgba(41, 47, 54, 0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 16px;
+            box-shadow: 4px 4px 0px 0px rgba(41, 47, 54, 0.2);
+            transition: all 0.2s ease;
             font-family: 'Nunito', sans-serif;
+            background: rgba(255,255,255,0.9);
         }
         .input-flat:focus {
             outline: none;
@@ -199,99 +289,123 @@
             border-color: #4ECDC4;
             transform: translateY(-2px);
         }
-        .input-flat:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
 
         .history-item {
-            background: white;
-            border: 2px solid #f3f4f6;
+            background: rgba(255,255,255,0.9);
+            border: 2px solid #e5e7eb;
             border-radius: 12px;
-            transition: 0.2s;
+            transition: transform 0.15s ease, border-color 0.15s ease;
             font-family: 'Nunito', sans-serif;
+            animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .history-item:hover {
             border-color: #292F36;
-            transform: scale(1.02);
+            transform: scale(1.02) rotate(-1deg);
             background: #FFF9C4; 
+            z-index: 10;
+        }
+
+        @keyframes slideIn { 
+            from { opacity: 0; transform: translateX(-20px); } 
+            to { opacity: 1; transform: translateX(0); } 
         }
 
         .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #4ECDC4; border-radius: 10px; transition: background 0.3s; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #3db8b0; }
-
-        .no-select { -webkit-user-select: none; user-select: none; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .history-item { animation: slideIn 0.3s ease-out; }
-        .btn-blocky:not(:disabled):hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0px 0px #292F36; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        .gift-tag {
-            display: inline-block;
-            background: #f0f9ff;
-            color: #0369a1;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            margin-left: 4px;
-            border: 1px solid #bae6fd;
+        /* Modal Styles */
+        .modal-box {
+            border: 4px solid #292F36;
+            border-radius: 24px;
+            box-shadow: 8px 8px 0px 0px #292F36;
         }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 relative font-sans">
 
-    <div class="area">
-        <ul class="circles">
-            <li></li><li></li><li></li><li></li><li></li>
-            <li></li><li></li><li></li><li></li><li></li>
-        </ul>
+    <div class="bg-animated"></div>
+    
+    <!-- Removed bg-noise -->
+
+    <div class="bokeh-container">
+        <div class="bokeh"></div>
+        <div class="bokeh"></div>
+        <div class="bokeh"></div>
     </div>
 
-    <div class="shape-blob top-10 left-10 text-white text-9xl mix-blend-overlay"><i class="fa-solid fa-gift"></i></div>
-    <div class="shape-blob bottom-20 right-20 text-white text-9xl mix-blend-overlay" style="animation-delay: 2s"><i class="fa-solid fa-star"></i></div>
-    <div class="shape-blob top-1/2 left-[-50px] text-white text-8xl mix-blend-overlay" style="animation-delay: 1s"><i class="fa-solid fa-circle"></i></div>
+    <div class="shapes-container">
+        <div class="floating-shape shape-sq"></div>
+        <div class="floating-shape shape-tri"></div>
+        <div class="floating-shape shape-cir"></div>
+    </div>
 
-    <div class="w-full max-w-5xl flat-card p-6 md:p-10 flex flex-col gap-8 animate-pop-in bg-white/95 backdrop-blur-sm relative">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="emoji-container">
+        <div class="emoji-particle">🎁</div>
+        <div class="emoji-particle">🥂</div>
+        <div class="emoji-particle">✨</div>
+        <div class="emoji-particle">💰</div>
+        <div class="emoji-particle">🎉</div>
+        <div class="emoji-particle">💖</div>
+    </div>
+    <div class="w-full max-w-5xl glass-card p-6 md:p-10 flex flex-col gap-8 animate-pop-in">
         
         <div class="flex justify-between items-start">
-            <div>
-                <h1 class="font-fun text-5xl md:text-6xl text-pop-dark leading-none font-extrabold">
-                    YEAR END PARTY <span class="text-pop-primary">2025</span>
+            <div class="relative">
+                <h1 class="font-fun text-5xl md:text-6xl text-pop-dark leading-none font-extrabold drop-shadow-sm">
+                    YEAR END PARTY <span class="text-pop-primary inline-block hover:scale-110 transition-transform cursor-pointer">2025</span>
                 </h1>
+                <p class="text-pop-text font-bold text-lg mt-1 italic opacity-80">Trao quà liền tay - Vận may sẽ tới</p>
             </div>
             
-            <button onclick="my_modal_1.showModal()" class="w-12 h-12 bg-white border-2 border-pop-dark rounded-full flex items-center justify-center shadow-block-sm hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
-                <i class="fa-solid fa-gear text-pop-dark text-xl"></i>
-            </button>
+            <div class="flex gap-3">
+                <!-- Nút bật tắt âm thanh -->
+                <button id="btn-sound" onclick="toggleSound()" class="w-12 h-12 bg-white border-2 border-pop-dark rounded-xl flex items-center justify-center shadow-block-sm hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all group">
+                    <i id="icon-sound" class="fa-solid fa-volume-high text-pop-dark text-xl group-hover:scale-110 transition-transform"></i>
+                </button>
+
+                <!-- Nút cài đặt -->
+                <button onclick="my_modal_1.showModal()" class="w-12 h-12 bg-white border-2 border-pop-dark rounded-xl flex items-center justify-center shadow-block-sm hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all group">
+                    <i class="fa-solid fa-gear text-pop-dark text-xl group-hover:rotate-90 transition-transform duration-500"></i>
+                </button>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mt-2">
             
             <div class="lg:col-span-7 flex flex-col items-center gap-8">
                 
-                <div class="bg-blue-50 w-full p-8 rounded-3xl border-2 border-dashed border-blue-200 flex justify-center items-center gap-4 relative">
-                    <div class="absolute -top-3 bg-white px-3 border-2 border-blue-200 rounded-full text-xs font-extrabold text-blue-400">MÓN QUÀ MAY MẮN SỐ</div>
-                    <div id="box-1" class="digit-box"><span id="digit-1">-</span></div>
-                    <div id="box-2" class="digit-box"><span id="digit-2">-</span></div>
-                    <div id="box-3" class="digit-box"><span id="digit-3">-</span></div>
+                <div class="bg-blue-50/80 backdrop-blur w-full p-8 rounded-3xl border-4 border-dashed border-blue-300 flex justify-center items-center gap-4 relative shadow-inner">
+                    <div class="absolute -top-4 bg-white px-4 py-1 border-2 border-blue-300 rounded-full text-xs font-extrabold text-blue-500 uppercase tracking-wider shadow-sm">
+                        <i class="fa-solid fa-star text-yellow-400 mr-1"></i> Con số bí ẩn
+                    </div>
+                    <div id="box-1" class="digit-box"><span id="digit-1">?</span></div>
+                    <div id="box-2" class="digit-box"><span id="digit-2">?</span></div>
+                    <div id="box-3" class="digit-box"><span id="digit-3">?</span></div>
                 </div>
 
                 <div class="w-full flex flex-col gap-4">
-                    <div class="relative">
+                    <div class="relative group">
                         <input type="text" id="current-player" oninput="checkPlayer()" onkeypress="handleKeyPress(event)" autocomplete="off"
-                            class="input-flat w-full py-4 px-5 text-xl font-bold font-sans text-pop-dark placeholder-gray-400" 
-                            placeholder="Nhập tên người lên nhận quà...">
-                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300"><i class="fa-solid fa-user-astronaut text-2xl"></i></div>
+                            class="input-flat w-full py-4 px-5 pl-14 text-xl font-bold font-sans text-pop-dark placeholder-gray-400" 
+                            placeholder="Ai là người may mắn tiếp theo?">
+                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-pop-secondary transition-colors">
+                            <i class="fa-solid fa-user-astronaut text-2xl"></i>
+                        </div>
                     </div>
 
-                    <div id="player-msg" class="h-6 text-center font-bold text-sm text-gray-400 transition-all duration-300">Sẵn sàng bốc thăm!</div>
+                    <div id="player-msg" class="h-6 text-center font-bold text-sm text-gray-500 transition-all duration-300 italic">
+                        Hãy nhập tên để may mắn gõ cửa...
+                    </div>
 
                     <div class="grid grid-cols-4 gap-4">
                         <button id="btn-spin" onclick="startSpin()" disabled 
-                            class="col-span-3 btn-blocky bg-pop-primary text-white text-xl py-4 hover:bg-[#ff5252]">
-                            <i class="fa-solid fa-gift mr-2"></i> NHẬN QUÀ
+                            class="col-span-3 btn-blocky bg-pop-primary text-white text-xl py-4 hover:bg-[#ff5252] flex items-center justify-center gap-3">
+                            <i class="fa-solid fa-gift animate-pulse"></i> QUAY SỐ NGAY
                         </button>
                         <button onclick="nextPerson()" 
                             class="col-span-1 btn-blocky bg-white text-pop-dark border-pop-dark hover:bg-gray-50">
@@ -303,17 +417,18 @@
 
             <div class="lg:col-span-5 flex flex-col h-full max-h-[500px]">
                 <div class="flex justify-between items-end mb-3 px-1">
-                    <h3 class="font-fun text-2xl text-pop-dark font-bold">Lịch sử nhận quà</h3>
-                    <span class="text-sm font-bold bg-pop-yellow px-2 py-1 rounded border-2 border-pop-dark shadow-block-sm">
-                        Còn: <span id="remaining-count">0</span> quà
+                    <h3 class="font-fun text-2xl text-pop-dark font-bold"><i class="fa-solid fa-clock-rotate-left mr-2 text-pop-secondary"></i>Lịch sử</h3>
+                    <span class="text-sm font-bold bg-pop-yellow px-3 py-1 rounded-full border-2 border-pop-dark shadow-[2px_2px_0px_0px_rgba(41,47,54,1)]">
+                        Kho: <span id="remaining-count">0</span> 🎁
                     </span>
                 </div>
 
-                <div class="bg-gray-50 rounded-2xl border-2 border-gray-200 p-2 flex-1 overflow-hidden flex flex-col">
+                <div class="bg-white/60 rounded-2xl border-2 border-white p-2 flex-1 overflow-hidden flex flex-col shadow-inner backdrop-blur-sm">
                     <ul id="history-list" class="flex-1 overflow-y-auto space-y-2 p-1 custom-scrollbar">
-                        <div id="empty-state" class="h-full flex flex-col items-center justify-center text-gray-300">
-                            <i class="fa-solid fa-box-open text-4xl mb-2"></i>
+                        <div id="empty-state" class="h-full flex flex-col items-center justify-center text-gray-400 opacity-70">
+                            <i class="fa-solid fa-box-open text-5xl mb-3 text-gray-300"></i>
                             <span class="font-bold">Chưa có ai nhận quà</span>
+                            <span class="text-xs">Nhanh tay lên nào!</span>
                         </div>
                     </ul>
                 </div>
@@ -321,55 +436,89 @@
         </div>
     </div>
 
-    <dialog id="my_modal_1" class="modal backdrop-blur-sm">
-        <div class="modal-box bg-white border-4 border-pop-dark rounded-3xl shadow-block p-6 max-w-2xl">
-            <h3 class="font-fun text-2xl mb-2 text-pop-primary font-bold">CÀI ĐẶT DANH SÁCH</h3>
-            <p class="text-sm text-gray-500 mb-1"><b>Định dạng mới:</b> Tên Người Chơi, Số Quà 1, Số Quà 2, ...</p>
-            <p class="text-xs text-gray-400 mb-1">• Mỗi người có thể mang nhiều món quà (mỗi món 1 số)</p>
-            <p class="text-xs text-gray-400 mb-4">• Khi quay, hệ thống sẽ loại TẤT CẢ số quà của người đó</p>
-            <textarea id="input-list" class="w-full h-48 bg-gray-50 border-2 border-gray-200 rounded-xl p-4 font-bold text-gray-600 focus:outline-none focus:border-pop-secondary focus:bg-white transition-all duration-300 font-sans resize-none"
-                placeholder="Nguyen Van A, 1, 2, 3&#10;Tran Thi B, 4&#10;Le Van C, 5, 6" spellcheck="false"></textarea>
+    <dialog id="my_modal_1" class="modal backdrop-blur-md">
+        <div class="modal-box bg-white p-6 max-w-2xl">
+            <h3 class="font-fun text-2xl mb-2 text-pop-primary font-bold uppercase border-b-2 border-gray-100 pb-2">
+                <i class="fa-solid fa-list-check mr-2"></i>Cấu hình danh sách
+            </h3>
+            <p class="text-sm text-gray-500 mb-1 mt-2"><b>Định dạng:</b> Tên Người Chơi, Mã quà 1, Mã quà 2...</p>
+            <textarea id="input-list" class="w-full h-48 bg-gray-50 border-2 border-gray-200 rounded-xl p-4 font-bold text-gray-600 focus:outline-none focus:border-pop-secondary focus:bg-white transition-all duration-300 font-sans resize-none mt-2"
+                placeholder="Nguyen Van A, 1, 2, 3&#10;Tran Thi B, 4" spellcheck="false"></textarea>
             <div class="modal-action grid grid-cols-2 gap-4 mt-6">
-                <form method="dialog" class="w-full"><button class="btn-blocky w-full py-3 bg-gray-200 text-gray-600 border-gray-400 shadow-[4px_4px_0px_0px_#9ca3af]">Hủy</button></form>
-                <button onclick="saveData()" class="btn-blocky w-full py-3 bg-pop-secondary text-white border-pop-dark">Lưu Lại</button>
+                <form method="dialog" class="w-full"><button class="btn-blocky w-full py-3 bg-gray-200 text-gray-600 border-gray-400 shadow-[4px_4px_0px_0px_#9ca3af]">Đóng</button></form>
+                <button onclick="saveData()" class="btn-blocky w-full py-3 bg-pop-secondary text-white border-pop-dark">Lưu Dữ Liệu</button>
             </div>
         </div>
         <form method="dialog" class="modal-backdrop"><button>close</button></form>
     </dialog>
 
     <script>
-        // --- DATA STRUCTURE ---
-        // playerList: Danh sách người chơi, mỗi người có thể có NHIỀU số quà
-        // { name: "Tên", searchKey: "tên", giftNumbers: [1, 2, 3] }
+        // --- GAME LOGIC ---
         let playerList = [];
-        
-        // giftMap: Map từ số quà -> tên người sở hữu (để biết quà của ai)
-        // { 1: "Tên A", 2: "Tên A", 3: "Tên B", ... }
         let giftMap = {};
-        
-        // allGiftNumbers: Tất cả số quà trong hệ thống
         let allGiftNumbers = [];
-        
-        // drawnNumbers: Các số đã được bốc
         let drawnNumbers = [];
-        
         let isSpinning = false;
         let checkPlayerTimeout;
+        let isMuted = false;
         
-        // --- ÂM THANH ---
-        const bgMusic = new Audio('sound.mp3'); 
+        // --- CẤU HÌNH ÂM THANH ---
+        const bgMusic = new Audio('sound_nen.mp3'); 
         bgMusic.loop = true; 
         bgMusic.volume = 0.5;
 
-        const spinMusic = new Audio('sound1.mp3'); 
+        const spinMusic = new Audio('sound_quay.mp3'); 
         spinMusic.loop = true;
         spinMusic.volume = 1.0;
 
-        const winSound = new Audio('sound2.mp3'); 
-        winSound.loop = false;
-        winSound.volume = 1.0;
+        // Âm thanh thắng sẽ được tạo động khi quay xong
+        let winAudio = null;
+        
+        // --- HỆ THỐNG RANDOM ÂM THANH KHÔNG LẶP ---
+        const TOTAL_WIN_SOUNDS = 9;
+        let winSoundQueue = []; // Queue các âm thanh sẽ phát
+        let lastPlayedSounds = []; // Lưu 3 âm thanh gần nhất để tránh lặp
+        
+        // Hàm tạo queue mới khi hết hoặc khởi tạo
+        function shuffleWinSounds() {
+            // Tạo mảng [1, 2, 3, ..., 9]
+            let sounds = Array.from({length: TOTAL_WIN_SOUNDS}, (_, i) => i + 1);
+            
+            // Fisher-Yates shuffle
+            for (let i = sounds.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [sounds[i], sounds[j]] = [sounds[j], sounds[i]];
+            }
+            
+            // Đảm bảo âm thanh đầu queue không trùng với âm thanh vừa phát
+            if (lastPlayedSounds.length > 0) {
+                const lastPlayed = lastPlayedSounds[lastPlayedSounds.length - 1];
+                if (sounds[0] === lastPlayed) {
+                    // Đổi vị trí với phần tử random khác
+                    const swapIdx = Math.floor(Math.random() * (sounds.length - 1)) + 1;
+                    [sounds[0], sounds[swapIdx]] = [sounds[swapIdx], sounds[0]];
+                }
+            }
+            
+            return sounds;
+        }
+        
+        // Lấy âm thanh tiếp theo từ queue
+        function getNextWinSound() {
+            if (winSoundQueue.length === 0) {
+                winSoundQueue = shuffleWinSounds();
+            }
+            const soundIndex = winSoundQueue.shift();
+            
+            // Cập nhật danh sách âm thanh đã phát (giữ tối đa 3)
+            lastPlayedSounds.push(soundIndex);
+            if (lastPlayedSounds.length > 3) {
+                lastPlayedSounds.shift();
+            }
+            
+            return soundIndex;
+        }
 
-        // Dữ liệu mẫu: Mỗi người có thể có nhiều số quà
         const defaultData = `Ngọc Dung, 1,
 Phương Ly, 2
 Quốc Hiệu, 3, 
@@ -383,27 +532,53 @@ Hồng Đào, 9
 Phượng Linh, 11
 Sĩ Nguyên, 12, 13, 14, 15
 Hồng Diễm, 16
-Hồng Ánh, 17
-Thanh Duy, 18
-Thế Hào, 19
-Vĩnh Phát, 20
-Như Quỳnh, 21
-Quang Minh, 22
-Hồng Châu, 23`;
+Thiên Khang, 17
+Thế Hào, 18
+Minh Thương, 19
+Hồng Ánh, 20
+Thanh Duy, 21
+Vĩnh Phát, 22
+Như Quỳnh, 23
+Quang Minh, 24
+Hồng Châu, 25
+Đình Văn, 26`;
 
         window.onload = function() {
             document.getElementById('input-list').value = defaultData;
             saveData(false);
-            startBackgroundMusic();
+            
+            // Tự động bật nhạc khi click lần đầu nếu chưa mute
+            document.body.addEventListener('click', () => {
+                if(!isMuted && bgMusic.paused) {
+                    bgMusic.play().catch(e => console.log(e));
+                }
+            }, { once: true });
         }
 
-        function startBackgroundMusic() {
-            bgMusic.play().catch(error => {
-                console.log("Trình duyệt chặn autoplay. Cần click chuột.");
-                document.body.addEventListener('click', () => {
-                    bgMusic.play();
-                }, { once: true });
-            });
+        function toggleSound() {
+            isMuted = !isMuted;
+            const icon = document.getElementById('icon-sound');
+            const btn = document.getElementById('btn-sound');
+            
+            if (isMuted) {
+                // Tắt nhạc
+                bgMusic.pause();
+                spinMusic.pause();
+                if(winAudio) winAudio.pause();
+                
+                icon.className = 'fa-solid fa-volume-xmark text-gray-500 text-xl group-hover:scale-110 transition-transform';
+                btn.className = 'w-12 h-12 bg-gray-100 border-2 border-gray-400 rounded-xl flex items-center justify-center shadow-none transition-all group';
+            } else {
+                // Bật nhạc
+                if (!isSpinning) {
+                    bgMusic.play().catch(e => console.log("Cần tương tác người dùng để phát nhạc"));
+                } else {
+                    spinMusic.play().catch(e => console.log(e));
+                }
+                
+                icon.className = 'fa-solid fa-volume-high text-pop-dark text-xl group-hover:scale-110 transition-transform';
+                btn.className = 'w-12 h-12 bg-white border-2 border-pop-dark rounded-xl flex items-center justify-center shadow-block-sm hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all group';
+            }
         }
 
         function normalizeStr(str) {
@@ -417,7 +592,6 @@ Hồng Châu, 23`;
             }
         }
 
-        // --- SAVE DATA: Parse định dạng mới ---
         function saveData(showAlert = true) {
             const raw = document.getElementById('input-list').value.trim();
             if (!raw) { alert('Vui lòng nhập danh sách!'); return; }
@@ -435,13 +609,10 @@ Hồng Châu, 23`;
                     const nameRaw = parts[0];
                     const giftNumbers = [];
                     
-                    // Lấy tất cả số quà từ cột 2 trở đi
                     for (let i = 1; i < parts.length; i++) {
                         const num = parseInt(parts[i]);
                         if (!isNaN(num) && num > 0) {
-                            if (usedNumbers.has(num)) {
-                                console.warn(`Số quà ${num} bị trùng lặp!`);
-                            } else {
+                            if (!usedNumbers.has(num)) {
                                 usedNumbers.add(num);
                                 giftNumbers.push(num);
                                 allGiftNumbers.push(num);
@@ -461,15 +632,14 @@ Hồng Châu, 23`;
             });
             
             if (playerList.length === 0) { 
-                alert('Không có dữ liệu hợp lệ! Vui lòng kiểm tra định dạng.'); 
+                alert('Không có dữ liệu hợp lệ!'); 
                 return; 
             }
             
             resetGame();
             document.getElementById('my_modal_1').close();
             
-            const totalGifts = allGiftNumbers.length;
-            if (showAlert) alert(`✅ Đã cập nhật: ${playerList.length} người với tổng cộng ${totalGifts} món quà.`);
+            if (showAlert) alert(`✅ Đã cập nhật: ${playerList.length} người với ${allGiftNumbers.length} món quà.`);
         }
 
         const DOM = {
@@ -481,7 +651,6 @@ Hồng Châu, 23`;
             get emptyState() { return document.getElementById('empty-state'); },
         };
 
-        // --- CHECK PLAYER: Hiển thị số quà của người đó ---
         function checkPlayer() {
             clearTimeout(checkPlayerTimeout);
             checkPlayerTimeout = setTimeout(() => {
@@ -491,59 +660,54 @@ Hồng Châu, 23`;
                 const btn = DOM.btnSpin;
 
                 if (searchKey === "") {
-                    msg.innerHTML = "Nhập tên để nhận quà...";
-                    msg.className = "h-6 text-center font-bold text-sm text-gray-400 transition-all";
+                    msg.innerHTML = "Hãy nhập tên để thần tài gõ cửa...";
+                    msg.className = "h-6 text-center font-bold text-sm text-gray-500 transition-all italic";
                     btn.disabled = true;
                     return;
                 }
                 
                 const player = playerList.find(p => p.searchKey === searchKey);
                 if (player) {
-                    const giftCount = player.giftNumbers.length;
-                    const giftDisplay = player.giftNumbers.join(', ');
-                    msg.innerHTML = `<i class="fa-solid fa-check-circle"></i> ${player.name} Sẳn sàng nhận quà!`;
+                    msg.innerHTML = `<i class="fa-solid fa-check-circle"></i> Chào <b>${player.name}</b>! Chúc bạn may mắn!`;
                     msg.className = "h-6 text-center font-bold text-sm text-pop-secondary transition-all";
                     btn.disabled = false;
                 } else {
-                    msg.innerHTML = `<i class="fa-solid fa-exclamation-circle"></i> Không tìm thấy tên trong danh sách...`;
-                    msg.className = "h-6 text-center font-bold text-sm text-orange-500 transition-all";
+                    msg.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Không tìm thấy tên trong danh sách...`;
+                    msg.className = "h-6 text-center font-bold text-sm text-red-400 transition-all";
                     btn.disabled = true;
                 }
             }, 100); 
         }
 
-        // --- START SPIN: Loại TẤT CẢ số quà của người quay ---
         function startSpin() {
             if (isSpinning) return;
 
             bgMusic.pause();
-            spinMusic.currentTime = 0;
-            spinMusic.play();
+            
+            if(!isMuted) {
+                spinMusic.currentTime = 0;
+                spinMusic.play();
+            }
 
             const inputVal = DOM.currentPlayer.value;
             const currentPlayer = playerList.find(p => p.searchKey === normalizeStr(inputVal));
             
-            // Tập hợp các số đã bốc
             const drawnSet = new Set(drawnNumbers);
-            
-            // Tập hợp các số quà của người đang quay (để loại trừ)
             const excludeNumbers = currentPlayer ? new Set(currentPlayer.giftNumbers) : new Set();
             
-            // Lọc ra các số có thể quay: chưa bốc VÀ không phải của người đang quay
             let availableNumbers = allGiftNumbers.filter(num => 
                 !drawnSet.has(num) && !excludeNumbers.has(num)
             );
 
             if (availableNumbers.length === 0) {
-                // Trường hợp chỉ còn lại quà của chính mình
                 const remaining = allGiftNumbers.filter(num => !drawnSet.has(num));
                 if (remaining.length > 0) {
-                    alert("Ôi không! Chỉ còn lại duy nhất các món quà của chính bạn. Hãy tráo đổi với người khác hoặc nhận luôn nhé!");
+                    alert("Chỉ còn lại quà của chính bạn! Hãy hoán đổi với người khác.");
                     availableNumbers = remaining;
                 } else {
-                    alert("Hết quà rồi!");
+                    alert("Đã hết quà rồi!");
                     spinMusic.pause();
-                    bgMusic.play();
+                    if(!isMuted) bgMusic.play();
                     return;
                 }
             }
@@ -558,19 +722,26 @@ Hồng Châu, 23`;
             const boxes = [document.getElementById('box-1'), document.getElementById('box-2'), document.getElementById('box-3')];
             const digits = [document.getElementById('digit-1'), document.getElementById('digit-2'), document.getElementById('digit-3')];
 
-            boxes.forEach(box => box.classList.add('spinning', 'no-select'));
+            boxes.forEach(box => box.classList.add('spinning'));
             
             const revealDigit = (box, digit, value) => {
-                cancelAnimationFrame(digit._animFrame);
+                if (digit._animFrame) {
+                    cancelAnimationFrame(digit._animFrame);
+                    digit._animFrame = null;
+                }
                 digit.textContent = value;
-                box.classList.remove('spinning', 'no-select');
-                box.style.cssText = 'background: #FF6B6B; color: white; border-color: #FF6B6B;';
+                box.classList.remove('spinning');
+                box.style.background = '#FF6B6B';
+                box.style.color = 'white';
+                box.style.borderColor = '#FF6B6B';
+                box.style.transform = 'scale(1.1)';
+                setTimeout(() => box.style.transform = 'scale(1)', 200);
             };
 
             digits.forEach(digit => {
                 let lastUpdate = 0;
                 const animate = (timestamp) => {
-                    if (timestamp - lastUpdate > 50) { 
+                    if (timestamp - lastUpdate >= 50) { 
                         digit.textContent = Math.floor(Math.random() * 10);
                         lastUpdate = timestamp;
                     }
@@ -579,12 +750,11 @@ Hồng Châu, 23`;
                 digit._animFrame = requestAnimationFrame(animate);
             });
 
-            const revealTimes = [1500, 2500, 3500];
-            revealTimes.forEach((time, i) => {
+            [1500, 2500, 3500].forEach((time, i) => {
                 setTimeout(() => {
                     revealDigit(boxes[i], digits[i], winnerStr[i]);
                     if (i === 2) {
-                        setTimeout(() => finalizeSpin(winnerNum, currentPlayer?.name || "Ẩn danh"), 200);
+                        setTimeout(() => finalizeSpin(winnerNum, currentPlayer?.name || "Khách Mời"), 300);
                     }
                 }, time);
             });
@@ -595,48 +765,54 @@ Hồng Châu, 23`;
             drawnNumbers.push(number);
 
             spinMusic.pause();
-            winSound.currentTime = 0;
-            winSound.play();
+
+            // --- LOGIC ÂM THANH TỐI ƯU (KHÔNG LẶP) ---
+            if (!isMuted) {
+                // Lấy âm thanh tiếp theo từ queue shuffle
+                const soundIndex = getNextWinSound();
+                const soundPath = `sound_trung (${soundIndex}).mp3`;
+                
+                winAudio = new Audio(soundPath);
+                winAudio.loop = false;
+                winAudio.volume = 1.0;
+                winAudio.play().catch(e => console.log("Lỗi phát âm thanh chiến thắng:", e));
+            }
 
             setTimeout(() => {
-                winSound.pause();
-                bgMusic.play();
-            }, 2000);
+                if(winAudio) winAudio.pause();
+                if(!isMuted) bgMusic.play();
+            }, 6000);
 
             runFireworks(); 
             
-            // Tìm tên chủ sở hữu món quà
             const giftOwner = giftMap[number] || "???";
             updateHistory(number, playerName, giftOwner);
             updateCount();
         }
 
         function runFireworks() {
-            var duration = 3 * 1000;
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+            const duration = 3000;
+            const animationEnd = Date.now() + duration;
+            const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FFFFFF', '#DDA0DD'];
 
-            var randomInRange = (min, max) => Math.random() * (max - min) + min;
-
-            var interval = setInterval(function() {
-                var timeLeft = animationEnd - Date.now();
-                if (timeLeft <= 0) { return clearInterval(interval); }
-                var particleCount = 50 * (timeLeft / duration);
+            const interval = setInterval(() => {
+                const timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) { clearInterval(interval); return; }
                 
-                confetti(Object.assign({}, defaults, { 
-                    particleCount, 
-                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-                    colors: ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FFFFFF']
-                }));
-                confetti(Object.assign({}, defaults, { 
-                    particleCount, 
-                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-                    colors: ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FFFFFF']
-                }));
+                const particleCount = Math.floor(40 * (timeLeft / duration));
+                
+                confetti({
+                    particleCount: particleCount,
+                    startVelocity: 30,
+                    spread: 360,
+                    origin: { x: Math.random(), y: Math.random() - 0.2 },
+                    colors,
+                    zIndex: 9999,
+                    shapes: ['square', 'circle']
+                });
             }, 250);
         }
 
-        // --- UPDATE HISTORY: Hiển thị thêm tên chủ quà ---
         function updateHistory(number, playerName, giftOwner) {
             const ul = DOM.historyList;
             const emptyState = DOM.emptyState;
@@ -648,16 +824,14 @@ Hồng Châu, 23`;
             
             li.innerHTML = `
                 <div class="flex flex-col">
-                    <span class="font-bold text-pop-dark truncate">${playerName}</span>
-                    <span class="text-xs text-gray-400">Quà của: ${giftOwner}</span>
+                    <span class="font-bold text-pop-dark truncate text-lg">${playerName}</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="text-xs text-gray-400 font-bold uppercase">Số</span>
-                    <span class="font-fun text-xl text-pop-primary font-bold bg-red-50 px-2 rounded-lg border border-red-100">${numStr}</span>
+                    <span class="font-fun text-2xl text-pop-primary font-bold bg-red-50 px-3 py-1 rounded-xl border border-red-100 shadow-sm">${numStr}</span>
                 </div>
             `;
+            
             ul.prepend(li);
-            if (ul.children.length > 100) ul.lastChild.remove();
         }
 
         function nextPerson() {
@@ -665,26 +839,35 @@ Hồng Châu, 23`;
             const input = DOM.currentPlayer;
             input.value = "";
             input.disabled = false;
-            input.focus();
             
             ['box-1', 'box-2', 'box-3'].forEach((boxId, i) => {
                 const box = document.getElementById(boxId);
                 const digit = document.getElementById(`digit-${i + 1}`);
-                digit.textContent = "-";
-                box.style.cssText = "";
-                box.classList.remove('spinning', 'no-select');
+                
+                if (digit._animFrame) {
+                    cancelAnimationFrame(digit._animFrame);
+                    digit._animFrame = null;
+                }
+                
+                digit.textContent = "?";
+                box.style.background = '';
+                box.style.color = '';
+                box.style.borderColor = '';
+                box.style.transform = '';
+                box.classList.remove('spinning');
             });
-            const msg = DOM.playerMsg;
-            msg.innerHTML = "Sẵn sàng bốc thăm!";
-            msg.className = "h-6 text-center font-bold text-sm text-gray-400 transition-all duration-300";
+            
+            DOM.playerMsg.innerHTML = "Hãy nhập tên để thần tài gõ cửa...";
+            DOM.playerMsg.className = "h-6 text-center font-bold text-sm text-gray-500 transition-all italic";
             DOM.btnSpin.disabled = true;
+            input.focus();
         }
 
         function resetGame() {
             drawnNumbers = [];
             document.getElementById('history-list').innerHTML = `
-                <div id="empty-state" class="h-full flex flex-col items-center justify-center text-gray-300">
-                    <i class="fa-solid fa-box-open text-4xl mb-2"></i>
+                <div id="empty-state" class="h-full flex flex-col items-center justify-center text-gray-400 opacity-70">
+                    <i class="fa-solid fa-box-open text-5xl mb-3 text-gray-300"></i>
                     <span class="font-bold">Chưa có ai nhận quà</span>
                 </div>`;
             updateCount();
