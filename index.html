@@ -51,7 +51,6 @@
     </script>
 
     <style>
-        /* Reset cơ bản */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
@@ -59,7 +58,6 @@
             overflow: hidden;
         }
 
-        /* --- BACKGROUND ĐỘNG --- */
         .area {
             position: fixed;
             top: 0;
@@ -115,7 +113,6 @@
             100% { transform: translateY(-120vh) rotate(720deg); opacity: 0; border-radius: 50%; }
         }
 
-        /* --- CARD --- */
         .flat-card {
             background: #ffffff;
             border: 3px solid #292F36;
@@ -229,6 +226,18 @@
         @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         .history-item { animation: slideIn 0.3s ease-out; }
         .btn-blocky:not(:disabled):hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0px 0px #292F36; }
+        
+        .gift-tag {
+            display: inline-block;
+            background: #f0f9ff;
+            color: #0369a1;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 4px;
+            border: 1px solid #bae6fd;
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 relative font-sans">
@@ -313,12 +322,13 @@
     </div>
 
     <dialog id="my_modal_1" class="modal backdrop-blur-sm">
-        <div class="modal-box bg-white border-4 border-pop-dark rounded-3xl shadow-block p-6">
+        <div class="modal-box bg-white border-4 border-pop-dark rounded-3xl shadow-block p-6 max-w-2xl">
             <h3 class="font-fun text-2xl mb-2 text-pop-primary font-bold">CÀI ĐẶT DANH SÁCH</h3>
-            <p class="text-sm text-gray-500 mb-2"><b>Định dạng:</b> Tên Người Chơi, Số Quà Họ Mang Đến</p>
-            <p class="text-xs text-gray-400 mb-4">Hệ thống sẽ đảm bảo người chơi không bốc trúng quà của chính mình.</p>
+            <p class="text-sm text-gray-500 mb-1"><b>Định dạng mới:</b> Tên Người Chơi, Số Quà 1, Số Quà 2, ...</p>
+            <p class="text-xs text-gray-400 mb-1">• Mỗi người có thể mang nhiều món quà (mỗi món 1 số)</p>
+            <p class="text-xs text-gray-400 mb-4">• Khi quay, hệ thống sẽ loại TẤT CẢ số quà của người đó</p>
             <textarea id="input-list" class="w-full h-48 bg-gray-50 border-2 border-gray-200 rounded-xl p-4 font-bold text-gray-600 focus:outline-none focus:border-pop-secondary focus:bg-white transition-all duration-300 font-sans resize-none"
-                placeholder="Nguyen Van A, 1&#10;Tran Thi B, 2" spellcheck="false"></textarea>
+                placeholder="Nguyen Van A, 1, 2, 3&#10;Tran Thi B, 4&#10;Le Van C, 5, 6" spellcheck="false"></textarea>
             <div class="modal-action grid grid-cols-2 gap-4 mt-6">
                 <form method="dialog" class="w-full"><button class="btn-blocky w-full py-3 bg-gray-200 text-gray-600 border-gray-400 shadow-[4px_4px_0px_0px_#9ca3af]">Hủy</button></form>
                 <button onclick="saveData()" class="btn-blocky w-full py-3 bg-pop-secondary text-white border-pop-dark">Lưu Lại</button>
@@ -328,35 +338,60 @@
     </dialog>
 
     <script>
-        // --- LOGIC ---
-        let fullList = [];
+        // --- DATA STRUCTURE ---
+        // playerList: Danh sách người chơi, mỗi người có thể có NHIỀU số quà
+        // { name: "Tên", searchKey: "tên", giftNumbers: [1, 2, 3] }
+        let playerList = [];
+        
+        // giftMap: Map từ số quà -> tên người sở hữu (để biết quà của ai)
+        // { 1: "Tên A", 2: "Tên A", 3: "Tên B", ... }
+        let giftMap = {};
+        
+        // allGiftNumbers: Tất cả số quà trong hệ thống
+        let allGiftNumbers = [];
+        
+        // drawnNumbers: Các số đã được bốc
         let drawnNumbers = [];
+        
         let isSpinning = false;
         let checkPlayerTimeout;
         
-        // --- CẤU HÌNH 3 FILE ÂM THANH ---
+        // --- ÂM THANH ---
         const bgMusic = new Audio('sound.mp3'); 
         bgMusic.loop = true; 
-        bgMusic.volume = 0.5; // Nhạc nền nhỏ hơn chút
+        bgMusic.volume = 0.5;
 
         const spinMusic = new Audio('sound1.mp3'); 
-        spinMusic.loop = true; // Lặp nhạc quay số nếu nó ngắn hơn 3s
+        spinMusic.loop = true;
         spinMusic.volume = 1.0;
 
         const winSound = new Audio('sound2.mp3'); 
         winSound.loop = false;
         winSound.volume = 1.0;
 
-        const defaultData = `Tuấn Anh, 1\nHoàng Bình, 2\nQuốc Cường, 3\nThùy Dương, 4\nNgọc Em, 5\nHải Phong, 6\nGia Hân, 7\nMinh Khôi, 8\nLan Nhi, 9\nPhương Oanh, 10\nThanh Tâm, 11\nViệt Thắng, 12\nNhã Uyên, 13\nXuân Vinh, 14\nHải Yến, 15`;
+        // Dữ liệu mẫu: Mỗi người có thể có nhiều số quà
+        const defaultData = `Tuấn Anh, 1, 2
+Hoàng Bình, 3
+Quốc Cường, 4, 5, 6
+Thùy Dương, 7
+Ngọc Em, 8, 9
+Hải Phong, 10
+Gia Hân, 11, 12
+Minh Khôi, 13
+Lan Nhi, 14, 15
+Phương Oanh, 16
+Thanh Tâm, 17, 18
+Việt Thắng, 19
+Nhã Uyên, 20
+Xuân Vinh, 21, 22
+Hải Yến, 23`;
 
-        // Khi tải trang xong
         window.onload = function() {
             document.getElementById('input-list').value = defaultData;
             saveData(false);
             startBackgroundMusic();
         }
 
-        // Hàm bật nhạc nền
         function startBackgroundMusic() {
             bgMusic.play().catch(error => {
                 console.log("Trình duyệt chặn autoplay. Cần click chuột.");
@@ -377,33 +412,59 @@
             }
         }
 
+        // --- SAVE DATA: Parse định dạng mới ---
         function saveData(showAlert = true) {
             const raw = document.getElementById('input-list').value.trim();
             if (!raw) { alert('Vui lòng nhập danh sách!'); return; }
             
             const lines = raw.split('\n').filter(line => line.trim());
-            fullList = [];
+            playerList = [];
+            giftMap = {};
+            allGiftNumbers = [];
             drawnNumbers = [];
             const usedNumbers = new Set();
             
             lines.forEach(line => {
-                const parts = line.split(',');
-                if(parts.length >= 2) {
+                const parts = line.split(',').map(p => p.trim());
+                if (parts.length >= 2) {
                     const nameRaw = parts[0];
-                    const num = parseInt(parts[1].trim());
-                    if(nameRaw && !isNaN(num) && num > 0) {
-                        if(usedNumbers.has(num)) { console.warn(`Số quà ${num} bị trùng lặp!`); }
-                        usedNumbers.add(num);
-                        fullList.push({ name: nameRaw.trim(), searchKey: normalizeStr(nameRaw), number: num });
+                    const giftNumbers = [];
+                    
+                    // Lấy tất cả số quà từ cột 2 trở đi
+                    for (let i = 1; i < parts.length; i++) {
+                        const num = parseInt(parts[i]);
+                        if (!isNaN(num) && num > 0) {
+                            if (usedNumbers.has(num)) {
+                                console.warn(`Số quà ${num} bị trùng lặp!`);
+                            } else {
+                                usedNumbers.add(num);
+                                giftNumbers.push(num);
+                                allGiftNumbers.push(num);
+                                giftMap[num] = nameRaw.trim();
+                            }
+                        }
+                    }
+                    
+                    if (nameRaw && giftNumbers.length > 0) {
+                        playerList.push({
+                            name: nameRaw.trim(),
+                            searchKey: normalizeStr(nameRaw),
+                            giftNumbers: giftNumbers
+                        });
                     }
                 }
             });
             
-            if(fullList.length === 0) { alert('Không có dữ liệu hợp lệ! Vui lòng kiểm tra định dạng.'); return; }
+            if (playerList.length === 0) { 
+                alert('Không có dữ liệu hợp lệ! Vui lòng kiểm tra định dạng.'); 
+                return; 
+            }
             
             resetGame();
             document.getElementById('my_modal_1').close();
-            if(showAlert) alert(`✅ Đã cập nhật: ${fullList.length} người & quà.`);
+            
+            const totalGifts = allGiftNumbers.length;
+            if (showAlert) alert(`✅ Đã cập nhật: ${playerList.length} người với tổng cộng ${totalGifts} món quà.`);
         }
 
         const DOM = {
@@ -413,10 +474,9 @@
             get historyList() { return document.getElementById('history-list'); },
             get remainingCount() { return document.getElementById('remaining-count'); },
             get emptyState() { return document.getElementById('empty-state'); },
-            boxes: ['box-1', 'box-2', 'box-3'].map(id => () => document.getElementById(id)),
-            digits: ['digit-1', 'digit-2', 'digit-3'].map(id => () => document.getElementById(id))
         };
 
+        // --- CHECK PLAYER: Hiển thị số quà của người đó ---
         function checkPlayer() {
             clearTimeout(checkPlayerTimeout);
             checkPlayerTimeout = setTimeout(() => {
@@ -431,9 +491,12 @@
                     btn.disabled = true;
                     return;
                 }
-                const player = fullList.find(p => p.searchKey === searchKey);
+                
+                const player = playerList.find(p => p.searchKey === searchKey);
                 if (player) {
-                    msg.innerHTML = `<i class="fa-solid fa-check-circle"></i> Sẵn sàng: ${player.name}`;
+                    const giftCount = player.giftNumbers.length;
+                    const giftDisplay = player.giftNumbers.join(', ');
+                    msg.innerHTML = `<i class="fa-solid fa-check-circle"></i> ${player.name} Sẳn sàng nhận quà!`;
                     msg.className = "h-6 text-center font-bold text-sm text-pop-secondary transition-all";
                     btn.disabled = false;
                 } else {
@@ -444,28 +507,38 @@
             }, 100); 
         }
 
+        // --- START SPIN: Loại TẤT CẢ số quà của người quay ---
         function startSpin() {
             if (isSpinning) return;
 
-            // --- QUẢN LÝ NHẠC: BẮT ĐẦU QUAY ---
-            bgMusic.pause();        // Dừng nhạc nền
-            spinMusic.currentTime = 0; // Tua lại nhạc quay
-            spinMusic.play();       // Phát nhạc quay
+            bgMusic.pause();
+            spinMusic.currentTime = 0;
+            spinMusic.play();
 
             const inputVal = DOM.currentPlayer.value;
-            const currentPlayer = fullList.find(p => p.searchKey === normalizeStr(inputVal));
-            const drawnSet = new Set(drawnNumbers);
-            const allGiftNumbers = fullList.map(p => p.number);
+            const currentPlayer = playerList.find(p => p.searchKey === normalizeStr(inputVal));
             
-            let availableNumbers = allGiftNumbers.filter(num => !drawnSet.has(num) && (currentPlayer ? num !== currentPlayer.number : true));
+            // Tập hợp các số đã bốc
+            const drawnSet = new Set(drawnNumbers);
+            
+            // Tập hợp các số quà của người đang quay (để loại trừ)
+            const excludeNumbers = currentPlayer ? new Set(currentPlayer.giftNumbers) : new Set();
+            
+            // Lọc ra các số có thể quay: chưa bốc VÀ không phải của người đang quay
+            let availableNumbers = allGiftNumbers.filter(num => 
+                !drawnSet.has(num) && !excludeNumbers.has(num)
+            );
 
             if (availableNumbers.length === 0) {
+                // Trường hợp chỉ còn lại quà của chính mình
                 const remaining = allGiftNumbers.filter(num => !drawnSet.has(num));
                 if (remaining.length > 0) {
-                    alert("Ôi không! Chỉ còn lại duy nhất món quà của chính bạn. Hãy tráo đổi thứ tự với người khác hoặc nhận luôn nhé!");
+                    alert("Ôi không! Chỉ còn lại duy nhất các món quà của chính bạn. Hãy tráo đổi với người khác hoặc nhận luôn nhé!");
                     availableNumbers = remaining;
                 } else {
                     alert("Hết quà rồi!");
+                    spinMusic.pause();
+                    bgMusic.play();
                     return;
                 }
             }
@@ -489,7 +562,7 @@
                 box.style.cssText = 'background: #FF6B6B; color: white; border-color: #FF6B6B;';
             };
 
-            const timers = digits.map(digit => {
+            digits.forEach(digit => {
                 let lastUpdate = 0;
                 const animate = (timestamp) => {
                     if (timestamp - lastUpdate > 50) { 
@@ -499,7 +572,6 @@
                     digit._animFrame = requestAnimationFrame(animate);
                 };
                 digit._animFrame = requestAnimationFrame(animate);
-                return digit;
             });
 
             const revealTimes = [1500, 2500, 3500];
@@ -517,19 +589,20 @@
             isSpinning = false;
             drawnNumbers.push(number);
 
-            // --- QUẢN LÝ NHẠC: KẾT THÚC QUAY ---
-            spinMusic.pause();        // Dừng nhạc quay
+            spinMusic.pause();
             winSound.currentTime = 0;
-            winSound.play();          // Phát nhạc thắng (sound2)
+            winSound.play();
 
-            // Khi nhạc thắng hết (hoặc sau 2s) -> Quay lại nhạc nền
             setTimeout(() => {
-                winSound.pause(); // Đảm bảo dừng nếu nhạc quá dài
-                bgMusic.play();   // Quay lại nhạc nền
-            }, 2000); // 2000 = 2 giây
+                winSound.pause();
+                bgMusic.play();
+            }, 2000);
 
             runFireworks(); 
-            updateHistory(number, playerName);
+            
+            // Tìm tên chủ sở hữu món quà
+            const giftOwner = giftMap[number] || "???";
+            updateHistory(number, playerName, giftOwner);
             updateCount();
         }
 
@@ -558,7 +631,8 @@
             }, 250);
         }
 
-        function updateHistory(number, playerName) {
+        // --- UPDATE HISTORY: Hiển thị thêm tên chủ quà ---
+        function updateHistory(number, playerName, giftOwner) {
             const ul = DOM.historyList;
             const emptyState = DOM.emptyState;
             if (emptyState) emptyState.style.display = 'none';
@@ -566,17 +640,17 @@
             const li = document.createElement('li');
             li.className = 'history-item flex justify-between items-center px-4 py-3';
             const numStr = number.toString().padStart(3, '0');
-            const nameSpan = document.createElement('span');
-            nameSpan.className = 'font-bold text-pop-dark truncate w-2/3';
-            nameSpan.textContent = playerName;
-
-            li.appendChild(nameSpan);
-            li.insertAdjacentHTML('beforeend', `
+            
+            li.innerHTML = `
+                <div class="flex flex-col">
+                    <span class="font-bold text-pop-dark truncate">${playerName}</span>
+                    <span class="text-xs text-gray-400">Quà của: ${giftOwner}</span>
+                </div>
                 <div class="flex items-center gap-2">
-                    <span class="text-xs text-gray-400 font-bold uppercase">Nhận quà</span>
+                    <span class="text-xs text-gray-400 font-bold uppercase">Số</span>
                     <span class="font-fun text-xl text-pop-primary font-bold bg-red-50 px-2 rounded-lg border border-red-100">${numStr}</span>
                 </div>
-            `);
+            `;
             ul.prepend(li);
             if (ul.children.length > 100) ul.lastChild.remove();
         }
@@ -613,7 +687,7 @@
         }
 
         function updateCount() {
-            DOM.remainingCount.textContent = fullList.length - drawnNumbers.length;
+            DOM.remainingCount.textContent = allGiftNumbers.length - drawnNumbers.length;
         }
     </script>
 </body>
