@@ -471,7 +471,7 @@
             }
             const soundIndex = winSoundQueue.shift();
             lastPlayedSounds.push(soundIndex);
-            if (lastPlayedSounds.length > 3) {
+            if (lastPlayedSounds.length > 2) {
                 lastPlayedSounds.shift();
             }
             return soundIndex;
